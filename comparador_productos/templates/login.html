@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>¡Mejor que tu abuela!</title>
+</head>
+<body>
+<form action="/verifylog/" method="post">
+    <span>Usuario: </span><input type="text" name="user" value={{ username }}>{{ usr_msg }}
+    <span>Contraseña: </span><input type="text" name="pass">{{ pass_msg }}
+    {% csrf_token %}
+    <br>
+    <input type="submit">
+</form>
+</body>
+</html>

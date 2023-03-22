@@ -15,7 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from comparador_productos.views.user_view import login, login_verification
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('login/', login),
+    path('verifylog/', login_verification),
 ]
