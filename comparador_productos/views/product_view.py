@@ -17,8 +17,21 @@ def shw_product(request):
     #first place for the cheapest product
     cheapest_products = [None, None, None, None]
     prueba = None
+    #recompone la lista cuando hay un valor mas barato para llevarlo a una posicion mas baja.
+    def prueba_tupla(number, product):
+        list = [None,None,None,None]
+        var = 0
+        for l in range(len(list)):
+            if l is number:
+                list[l] = product
+                var+=1
+            else:
+                list[l] = cheapest_products[l-var]
+
+        return list
     #select the cheapest product in the list and put un cheapest_products list
     def slct_cheapest_one(product_price, product_name, product_photo):
+        nonlocal cheapest_products
         for position_price in range(len(product_price)):
 
             #select only the numeric part of the price
@@ -34,9 +47,9 @@ def shw_product(request):
                 if product is None or float(product.getPrice().replace(",",".")) > float(price.replace(",",".")):
 
                     new_product = Products_repository(product_name[position_price].text,price, product_photo[position_price].get_attribute("src"))
-                    cheapest_products[position_product] = new_product
-                    break
 
+                    cheapest_products = prueba_tupla(position_product, new_product)
+                    break
 
     driver = webdriver.Firefox()
     #wait = WebDriverWait(driver, 10)
@@ -50,6 +63,6 @@ def shw_product(request):
     slct_cheapest_one(price,name,img)
     #driver.close()
     ##NO ENCUENTRA UN PRECIO BARATO
-    return HttpResponse(name[17].text + " || "+ price[17].text + " || " + "<img src="+img[17].get_attribute("src")+">")#cheapest_products[0].getPrice())#price[6].text)
+    #return HttpResponse(len(cheapest_products))#name[17].text + " || "+ price[17].text + " || " + "<img src="+img[17].get_attribute("src")+">")#cheapest_products[0].getPrice())#price[6].text)
     #name[15].text + " || "+ price[15].text + " || " + "<img src="+img[15].get_attribute("src")+">"
-    #return render(request, "prueba.html", {"tuplita":cheapest_products})
+    return render(request, "prueba.html", {"tuplita":cheapest_products})
