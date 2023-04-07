@@ -1,6 +1,5 @@
 from django.http import HttpResponse
-from django.template import loader
-from login.repositories.Users_repository import Users_repository
+from session_management.repositories.Users_repository import Users_repository
 from django.shortcuts import render, redirect
 
 def login(request):
@@ -21,6 +20,8 @@ def login_verification(request):
 
     if user.exist_user():
         if user.correct_password():
+            request.session["pass_msg"] = ""
+            request.session["usr_msg"] = ""
             return HttpResponse("Funciona!!")
         else:
             # if the password is not correct introduces the error message and deletes the error message from the user
@@ -36,3 +37,6 @@ def login_verification(request):
         # saves the user name to write in login form
         request.session["usr_name"] = usr
         return redirect("/login/")
+
+def profile(request):
+    return render(request, "profile.html")

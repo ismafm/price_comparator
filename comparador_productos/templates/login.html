@@ -6,8 +6,8 @@
 </head>
 <body>
 <form action="/verifylog/" method="post">
-    <span>Usuario: </span><input type="text" name="user" value={{ username }}>{{ usr_msg }}
-    <span>Contraseña: </span><input type="text" name="pass">{{ pass_msg }}
+    <p></pZ><span>Usuario: </span><input type="text" name="user" value={{ username }}> {{ usr_msg }}</p>
+    <p><span>Contraseña: </span><input type="text" name="pass"> {{ pass_msg }}</p>
     {% csrf_token %}
     <br>
     <input type="submit">
