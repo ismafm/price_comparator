@@ -15,11 +15,11 @@ import time
 
 def shw_product(request):
     #first place for the cheapest product
-    cheapest_products = [None, None, None, None]
+    cheapest_products = [None, None, None, None, None, None, None, None, None, None]
     prueba = None
     #recompone la lista cuando hay un valor mas barato para llevarlo a una posicion mas baja.
     def prueba_tupla(number, product):
-        list = [None,None,None,None]
+        list = [None, None, None, None, None, None, None, None, None, None]
         var = 0
         for l in range(len(list)):
             if l is number:
@@ -54,15 +54,23 @@ def shw_product(request):
     driver = webdriver.Firefox()
     #wait = WebDriverWait(driver, 10)
     #element = wait.until(EC.element_to_be_clickable((By.ID, 'someid')))
-    driver.get("https://www.amazon.es/s?k=cactus+parlante")
+    busqueda = "judgment"
+    busqueda.replace(" ","+")
+    pagina = "https://www.amazon.es/s?k="+busqueda+"&rh=p_n_deal_type%3A26902953031"
+    driver.get(pagina)
 #    time.sleep(10)
-    name = driver.find_elements(By.CSS_SELECTOR, "div[data-asin^='B'][class='sg-col-4-of-24 sg-col-4-of-12 s-result-item s-asin sg-col-4-of-16 sg-col s-widget-spacing-small sg-col-4-of-20'] div div div div div:nth-child(2) div[class*='s-title-instructions-style'] h2 a span")[0:40]
-    img = driver.find_elements(By.CSS_SELECTOR, "div[data-asin^='B'][class='sg-col-4-of-24 sg-col-4-of-12 s-result-item s-asin sg-col-4-of-16 sg-col s-widget-spacing-small sg-col-4-of-20'] div div div div div:nth-child(1) span a div img")[0:40]
-    price = driver.find_elements(By.CSS_SELECTOR, "div[data-asin^='B'][class='sg-col-4-of-24 sg-col-4-of-12 s-result-item s-asin sg-col-4-of-16 sg-col s-widget-spacing-small sg-col-4-of-20'] div div div div div:nth-child(2) div[class*='s-price-instructions-style'] div[class*='a-color-base'] a span span[aria-hidden='true'] span[class='a-price-whole']")[0:40]
+    name = driver.find_elements(By.CSS_SELECTOR, "div[data-asin^='B'][class='sg-col-4-of-24 sg-col-4-of-12 s-result-item s-asin sg-col-4-of-16 sg-col s-widget-spacing-small sg-col-4-of-20'] span[class*='a-text-normal']")[0:25]
+    img = driver.find_elements(By.CSS_SELECTOR, "div[data-asin^='B'][class='sg-col-4-of-24 sg-col-4-of-12 s-result-item s-asin sg-col-4-of-16 sg-col s-widget-spacing-small sg-col-4-of-20'] span[data-component-type='s-product-image'] img[class='s-image']")[0:25]
+    price = driver.find_elements(By.CSS_SELECTOR, "div[data-asin^='B'][class='sg-col-4-of-24 sg-col-4-of-12 s-result-item s-asin sg-col-4-of-16 sg-col s-widget-spacing-small sg-col-4-of-20'] div[class*='s-price-instructions-style'] span[class='a-price']:first-child span[class='a-price-whole']")[0:25]
+
+#name = driver.find_elements(By.CSS_SELECTOR, "div[data-asin^='B'][class='sg-col-4-of-24 sg-col-4-of-12 s-result-item s-asin sg-col-4-of-16 sg-col s-widget-spacing-small sg-col-4-of-20'] div div div div div:last-child div[class*='s-title-instructions-style'] h2 a span")[0:40]
+#img = driver.find_elements(By.CSS_SELECTOR, "div[data-asin^='B'][class='sg-col-4-of-24 sg-col-4-of-12 s-result-item s-asin sg-col-4-of-16 sg-col s-widget-spacing-small sg-col-4-of-20'] div div div div div[class*='s-product-image-container'] span a div img")[0:40]
+#price = driver.find_elements(By.CSS_SELECTOR, "div[data-asin^='B'][class='sg-col-4-of-24 sg-col-4-of-12 s-result-item s-asin sg-col-4-of-16 sg-col s-widget-spacing-small sg-col-4-of-20'] div div div div div:last-child div[class*='s-price-instructions-style'] div[class*='a-color-base'] a span[class='a-price']:first-child span[aria-hidden='true'] span[class='a-price-whole']")[0:40]
+
 
     slct_cheapest_one(price,name,img)
-    #driver.close()
+    driver.close()
     ##NO ENCUENTRA UN PRECIO BARATO
-    #return HttpResponse(len(cheapest_products))#name[17].text + " || "+ price[17].text + " || " + "<img src="+img[17].get_attribute("src")+">")#cheapest_products[0].getPrice())#price[6].text)
+    #return HttpResponse(name[24].text + " || "+ price[24].text + " || " + "<img src="+img[24].get_attribute("src")+">")#cheapest_products[0].getPrice())#price[6].text)
     #name[15].text + " || "+ price[15].text + " || " + "<img src="+img[15].get_attribute("src")+">"
     return render(request, "prueba.html", {"tuplita":cheapest_products})
