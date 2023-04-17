@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': 'price_comparator',
         'USER':'ismael',
         'PASSWORD':'ismael',
-        'HOST':'192.168.0.15',
+        'HOST':'192.168.0.17',
         'PORT':'3306',
 
     }

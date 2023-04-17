@@ -1,9 +1,10 @@
 class Products_repository():
 
-    def __init__(self,name=None,price=None,photo=None):
+    def __init__(self,name=None,price=None,photo=None,link=None):
         self._name = name
         self._price = price
         self._photo = photo
+        self._link = link
 
 
     def getPrice(self):
@@ -18,3 +19,7 @@ class Products_repository():
         return self._photo
     def setPhoto(self,photo):
         self._photo = photo
+    def getLink(self):
+        return self._link
+    def setLink(self,link):
+        self._link = link
