@@ -22,7 +22,7 @@ class Users_repository():
 
         usr = Users.objects.get(user=self._user)
 
-        if usr._password == self._password:
+        if usr.password == self._password:
             return True
         else:
             return False

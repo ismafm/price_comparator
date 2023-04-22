@@ -15,15 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from comparador_productos.views.user_view import login, login_verification, profile
-from comparador_productos.views.product_view import shw_product
+from comparador_productos.views.user_view import login, logout, login_verification, profile
+from comparador_productos.views.product_view import shw_product, principal_page, search_page
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path(''),
+    path('', principal_page),
+    path('search/', search_page),
     path('login/', login),
+    path('logout/', logout),
     path('verifylog/', login_verification),
     path('profile/', profile),
     path('result/', shw_product),

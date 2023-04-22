@@ -10,6 +10,10 @@ def login(request):
     #return HttpResponse(usr_sess_msg)
     return render(request, "login.html", {"usr_msg":usr_sess_msg,"pass_msg":pass_sess_msg,"username":username})
 
+def logout(request):
+    request.session.flush()
+    return redirect("/")
+
 def login_verification(request):
 
     usr = request.POST["user"]
@@ -22,7 +26,8 @@ def login_verification(request):
         if user.correct_password():
             request.session["pass_msg"] = ""
             request.session["usr_msg"] = ""
-            return HttpResponse("Funciona!!")
+            request.session["usr_name"] = usr
+            return redirect('/search/')
         else:
             # if the password is not correct introduces the error message and deletes the error message from the user
             request.session["pass_msg"] = "La contraseña introducida es errónea, por favor, introduce la contraseña correcta"

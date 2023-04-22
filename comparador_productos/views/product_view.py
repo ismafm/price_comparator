@@ -15,10 +15,17 @@ import time
 
 #Pagina que se mostrará al entrar a la pagina a menos que se inicie sesión
 def principal_page(request):
-    return HttpResponse("<a><button>Login</button></a>")
+    if request.session["usr_name"] != "":
+        return redirect("/search/")
+    return HttpResponse("<a href='/login/'><button>Login</button></a>")
 #pagina de busqueda de productos. En ella solo se podran acceder los usuarios registrados
-def search_page()
+def search_page(request):
+    if "usr_name" not in request.session or request.session["usr_name"] is "":
+        return redirect("/")
+    return render(request, "search.html")
+
 def shw_product(request):
+    product_name = request.GET["product"]
     # first place for the cheapest product
     cheapest_products = [None, None, None, None, None, None, None, None, None, None]
     prueba = None
@@ -70,8 +77,7 @@ def shw_product(request):
         return price
 
     # Busca los 25 primeros productos de amazon y los manda a comparar
-    def search_amazon_products(driver):
-        busqueda = "cartera hombre"
+    def search_amazon_products(driver, busqueda):
         busqueda.replace(" ", "+")
         pagina = "https://www.amazon.es/s?k=" + busqueda + "&rh=p_n_deal_type%3A26902953031"
         driver.get(pagina)
@@ -94,8 +100,7 @@ def shw_product(request):
         slct_cheapest_one(price, name, img, link)
         #driver.close()
 
-    def search_ebay_products(driver):
-        busqueda = "biblia"
+    def search_ebay_products(driver, busqueda):
         busqueda.replace(" ", "+")
         pagina = "https://www.ebay.es/sch/i.html?_from=R40&_trksid=p2380057.m570.l1313&_nkw=" + busqueda + "&_sacat=0"
 
@@ -111,6 +116,6 @@ def shw_product(request):
         driver.close()
 
 
-#    search_ebay_products(driver)
-    search_amazon_products(driver)
+    search_amazon_products(driver, product_name)
+    search_ebay_products(driver, product_name)
     return render(request, "prueba.html", {"tuplita": cheapest_products})
