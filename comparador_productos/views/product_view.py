@@ -25,11 +25,6 @@ def search_page(request):
     return render(request, "search.html")
 
 def shw_product(request):
-    product_name = request.GET["product"]
-    # first place for the cheapest product
-    cheapest_products = [None, None, None, None, None, None, None, None, None, None]
-    prueba = None
-
     # recompone la lista cuando hay un valor mas barato para llevarlo a una posicion mas baja.
     def add_new_cheapest(number, product):
         list = [None, None, None, None, None, None, None, None, None, None]
@@ -67,7 +62,6 @@ def shw_product(request):
                     cheapest_products = add_new_cheapest(position_product, new_product)
                     break
 
-    driver = webdriver.Firefox()
     def numeric_price_field(price):
         #select only the numeric part in price field
         for i,j in enumerate(price):
@@ -113,9 +107,53 @@ def shw_product(request):
 
         price = numeric_price_field(price)
         slct_cheapest_one(price, name, img, link)
+    def search_aliexpress_products(driver, busqueda):
+        busqueda.replace(" ", "+")
+        pagina = "https://es.aliexpress.com/w/wholesale-cartera-hombre.html?SearchText=" + busqueda
+        driver.get(pagina)
+        link = driver.find_elements(By.CSS_SELECTOR, ".list--gallery--34TropR .manhattan--container--1lP57Ag")
+        #refresh the pae until it shows it correctly
+        while len(link)==0:
+            driver.refresh()
+            time.sleep(1)
+            link = driver.find_elements(By.CSS_SELECTOR, ".list--gallery--34TropR .manhattan--container--1lP57Ag")
+        time.sleep(1)
+        driver.execute_script("window.scrollTo(0,1000)")
+        time.sleep(1)
+        driver.execute_script("window.scrollTo(1000,2000)")
+        time.sleep(1)
+        name = driver.find_elements(By.CSS_SELECTOR, ".list--gallery--34TropR .manhattan--container--1lP57Ag .manhattan--titleText--WccSjUS")[0:25]
+        img = driver.find_elements(By.CSS_SELECTOR, ".list--gallery--34TropR .manhattan--container--1lP57Ag .product-img")[0:25]
+        price = driver.find_elements(By.CSS_SELECTOR, ".list--gallery--34TropR .manhattan--container--1lP57Ag .manhattan--price-sale--1CCSZfK span:nth-child(n+2)")[0:75]
+        link = driver.find_elements(By.CSS_SELECTOR, ".list--gallery--34TropR .manhattan--container--1lP57Ag")[0:25]
+
+        correct_price = []
+        real_position = 0
+        for i in range(0,len(price),3):
+
+            #verifica si hay un punto en la siguiente posicion. si no lo hay es que el numero no es decimal
+            if price[i+1+real_position].text is not ".":
+                correct_price.append(str(price[i + real_position].text))
+                real_position -= 2
+            else:
+                correct_price.append(str(price[i+real_position].text)+str(price[i+1+real_position].text)+str(price[i+2+real_position].text))
+
+        price = correct_price
+
+        #price = correct_price
+
+        slct_cheapest_one(price, name, img, link)
+
+        #return "<a href='"+str(link[24].get_attribute("href"))+"'>"+str(name[24].text) + "</a>: Precio: " + str(price[24]) + "<img src='"+str(img[24].get_attribute("src"))+"'>"
         driver.close()
 
 
+    product_name = request.GET["product"]
+    # first place for the cheapest product
+    cheapest_products = [None, None, None, None, None, None, None, None, None, None]
+    driver = webdriver.Firefox()
     search_amazon_products(driver, product_name)
     search_ebay_products(driver, product_name)
+    #search_aliexpress_products(driver, product_name)
     return render(request, "prueba.html", {"tuplita": cheapest_products})
+    #return HttpResponse(hi)
