@@ -26,7 +26,7 @@ def search_page(request):
 
 def shw_product(request):
     # recompone la lista cuando hay un valor mas barato para llevarlo a una posicion mas baja.
-    def add_new_cheapest(number, product):
+    def add_new_cheapest(number, product, old_list):
         list = [None, None, None, None, None, None, None, None, None, None]
         var = 0
         for l in range(len(list)):
@@ -34,13 +34,12 @@ def shw_product(request):
                 list[l] = product
                 var += 1
             else:
-                list[l] = cheapest_products[l - var]
+                list[l] = old_list[l - var]
 
         return list
 
     # select the cheapest product in the list and put un cheapest_products list
-    def slct_cheapest_one(product_price, product_name, product_photo, product_link):
-        nonlocal cheapest_products
+    def slct_cheapest_one(product_price, product_name, product_photo, product_link, cheapest_products_list):
         # range allout products and select cheapest ones
         for position_price in range(len(product_price)):
 
@@ -49,29 +48,31 @@ def shw_product(request):
             # replaces the commas with the period to make a numeric parse
 
             # range allout the cheapest product array and insert the compared product if is cheap
-            for position_product in range(len(cheapest_products)):
+            for position_product in range(len(cheapest_products_list)):
 
                 # select one product from the list
-                product = cheapest_products[position_product]
+                product = cheapest_products_list[position_product]
 
                 if product is None or float(product.getPrice().replace(",", ".")) > float(price.replace(",", ".")):
                     new_product = Products_repository(product_name[position_price].text, price,
                                                       product_photo[position_price].get_attribute("src"),
                                                       product_link[position_price].get_attribute("href"))
 
-                    cheapest_products = add_new_cheapest(position_product, new_product)
+                    cheapest_products_list = add_new_cheapest(position_product, new_product, cheapest_products_list)
                     break
+
+        return cheapest_products_list
 
     def numeric_price_field(price):
         #select only the numeric part in price field
         for i,j in enumerate(price):
-
             price[i] = j.text.split(' ')[0]
+            price[i] = price[i].translate({ord("€"):None})
 
         return price
 
     # Busca los 25 primeros productos de amazon y los manda a comparar
-    def search_amazon_products(driver, busqueda):
+    def search_amazon_products(driver, busqueda, cheapest_products_list):
         busqueda.replace(" ", "+")
         pagina = "https://www.amazon.es/s?k=" + busqueda + "&rh=p_n_deal_type%3A26902953031"
         driver.get(pagina)
@@ -91,10 +92,11 @@ def shw_product(request):
                0:25]
 
         price = numeric_price_field(price)
-        slct_cheapest_one(price, name, img, link)
+        cheapest_products_list = slct_cheapest_one(price, name, img, link, cheapest_products_list)
+        return cheapest_products_list
         #driver.close()
 
-    def search_ebay_products(driver, busqueda):
+    def search_ebay_products(driver, busqueda, cheapest_products_list):
         busqueda.replace(" ", "+")
         pagina = "https://www.ebay.es/sch/i.html?_from=R40&_trksid=p2380057.m570.l1313&_nkw=" + busqueda + "&_sacat=0"
 
@@ -106,8 +108,9 @@ def shw_product(request):
         link = driver.find_elements(By.CSS_SELECTOR, ".srp-results > .s-item__pl-on-bottom .s-item__link")[0:25]
 
         price = numeric_price_field(price)
-        slct_cheapest_one(price, name, img, link)
-    def search_aliexpress_products(driver, busqueda):
+        cheapest_products_list = slct_cheapest_one(price, name, img, link, cheapest_products_list)
+        return cheapest_products_list
+    def search_aliexpress_products(driver, busqueda, cheapest_products_list):
         busqueda.replace(" ", "+")
         pagina = "https://es.aliexpress.com/w/wholesale-cartera-hombre.html?SearchText=" + busqueda
         driver.get(pagina)
@@ -124,25 +127,15 @@ def shw_product(request):
         time.sleep(1)
         name = driver.find_elements(By.CSS_SELECTOR, ".list--gallery--34TropR .manhattan--container--1lP57Ag .manhattan--titleText--WccSjUS")[0:25]
         img = driver.find_elements(By.CSS_SELECTOR, ".list--gallery--34TropR .manhattan--container--1lP57Ag .product-img")[0:25]
-        price = driver.find_elements(By.CSS_SELECTOR, ".list--gallery--34TropR .manhattan--container--1lP57Ag .manhattan--price-sale--1CCSZfK span:nth-child(n+2)")[0:75]
+        price = driver.find_elements(By.CSS_SELECTOR, ".list--gallery--34TropR .manhattan--container--1lP57Ag .manhattan--price-sale--1CCSZfK:visible")[0:75]
         link = driver.find_elements(By.CSS_SELECTOR, ".list--gallery--34TropR .manhattan--container--1lP57Ag")[0:25]
 
-        correct_price = []
-        real_position = 0
-        for i in range(0,len(price),3):
-
-            #verifica si hay un punto en la siguiente posicion. si no lo hay es que el numero no es decimal
-            if price[i+1+real_position].text is not ".":
-                correct_price.append(str(price[i + real_position].text))
-                real_position -= 2
-            else:
-                correct_price.append(str(price[i+real_position].text)+str(price[i+1+real_position].text)+str(price[i+2+real_position].text))
-
-        price = correct_price
-
-        #price = correct_price
-
-        slct_cheapest_one(price, name, img, link)
+        #price = numeric_price_field(price)
+        #cheapest_products_list = slct_cheapest_one(price, name, img, link, cheapest_products_list)
+        hi = ""
+        for i in price:
+            hi += i.text+ "|||"
+        return hi
 
         #return "<a href='"+str(link[24].get_attribute("href"))+"'>"+str(name[24].text) + "</a>: Precio: " + str(price[24]) + "<img src='"+str(img[24].get_attribute("src"))+"'>"
         driver.close()
@@ -152,8 +145,8 @@ def shw_product(request):
     # first place for the cheapest product
     cheapest_products = [None, None, None, None, None, None, None, None, None, None]
     driver = webdriver.Firefox()
-    search_amazon_products(driver, product_name)
-    search_ebay_products(driver, product_name)
-    #search_aliexpress_products(driver, product_name)
-    return render(request, "prueba.html", {"tuplita": cheapest_products})
-    #return HttpResponse(hi)
+    #cheapest_products = search_amazon_products(driver, product_name, cheapest_products)
+    #search_ebay_products(driver, product_name)
+    hi = search_aliexpress_products(driver, product_name, cheapest_products)
+    #return render(request, "result.html", {"tuplita": cheapest_products})
+    return HttpResponse(hi)
