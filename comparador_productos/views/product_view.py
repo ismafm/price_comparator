@@ -9,9 +9,11 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from product_management.repositories.Products_repository import Products_repository
+from recopilador_productos.recopilador_productos.spiders.ebay_spider import scrap_action
 from copy import deepcopy
 from selenium.webdriver.support import expected_conditions as EC
 import time
+
 
 #Pagina que se mostrará al entrar a la pagina a menos que se inicie sesión
 def principal_page(request):
@@ -39,12 +41,12 @@ def shw_product(request):
         return list
 
     # select the cheapest product in the list and put un cheapest_products list
-    def slct_cheapest_one(product_price, product_name, product_photo, product_link, cheapest_products_list):
+    def slct_cheapest_one(product_list,cheapest_products_list):
         # range allout products and select cheapest ones
-        for position_price in range(len(product_price)):
+        for index, in_product in enumerate(product_list):
 
             # select only the numeric part of the price
-            price = product_price[position_price]#.text
+            price = in_product["price"]
             # replaces the commas with the period to make a numeric parse
 
             # range allout the cheapest product array and insert the compared product if is cheap
@@ -54,9 +56,9 @@ def shw_product(request):
                 product = cheapest_products_list[position_product]
 
                 if product is None or float(product.getPrice().replace(",", ".")) > float(price.replace(",", ".")):
-                    new_product = Products_repository(product_name[position_price].text, price,
-                                                      product_photo[position_price].get_attribute("src"),
-                                                      product_link[position_price].get_attribute("href"))
+                    new_product = Products_repository(in_product["name"], price,
+                                                      in_product["photo"],
+                                                      in_product["link"])
 
                     cheapest_products_list = add_new_cheapest(position_product, new_product, cheapest_products_list)
                     break
@@ -68,85 +70,17 @@ def shw_product(request):
         for i,j in enumerate(price):
             price[i] = j.text.split(' ')[0]
             price[i] = price[i].translate({ord("€"):None})
-
         return price
 
-    # Busca los 25 primeros productos de amazon y los manda a comparar
-    def search_amazon_products(driver, busqueda, cheapest_products_list):
-        busqueda.replace(" ", "+")
-        pagina = "https://www.amazon.es/s?k=" + busqueda + "&rh=p_n_deal_type%3A26902953031"
-        driver.get(pagina)
-        driver.refresh()
+    def ebay_products(search_product,cheapest_products):
+        products = scrap_action()
+        new_list = slct_cheapest_one(products,cheapest_products)
+        return new_list
 
-        name = driver.find_elements(By.CSS_SELECTOR,
-                                    "div[data-asin^='B'][class='sg-col-4-of-24 sg-col-4-of-12 s-result-item s-asin sg-col-4-of-16 sg-col s-widget-spacing-small sg-col-4-of-20'] span[class*='a-text-normal']")[
-               0:25]
-        img = driver.find_elements(By.CSS_SELECTOR,
-                                   "div[data-asin^='B'][class='sg-col-4-of-24 sg-col-4-of-12 s-result-item s-asin sg-col-4-of-16 sg-col s-widget-spacing-small sg-col-4-of-20'] span[data-component-type='s-product-image'] img[class='s-image']")[
-              0:25]
-        price = driver.find_elements(By.CSS_SELECTOR,
-                                     "div[data-asin^='B'][class='sg-col-4-of-24 sg-col-4-of-12 s-result-item s-asin sg-col-4-of-16 sg-col s-widget-spacing-small sg-col-4-of-20'] div[class*='s-price-instructions-style'] span[class='a-price']:first-child span[class='a-price-whole']")[
-                0:25]
-        link = driver.find_elements(By.CSS_SELECTOR,
-                                    "div[data-asin^='B'][class='sg-col-4-of-24 sg-col-4-of-12 s-result-item s-asin sg-col-4-of-16 sg-col s-widget-spacing-small sg-col-4-of-20'] span[data-component-type='s-product-image'] a")[
-               0:25]
-
-        price = numeric_price_field(price)
-        cheapest_products_list = slct_cheapest_one(price, name, img, link, cheapest_products_list)
-        return cheapest_products_list
-        #driver.close()
-
-    def search_ebay_products(driver, busqueda, cheapest_products_list):
-        busqueda.replace(" ", "+")
-        pagina = "https://www.ebay.es/sch/i.html?_from=R40&_trksid=p2380057.m570.l1313&_nkw=" + busqueda + "&_sacat=0"
-
-        driver.get(pagina)
-
-        name = driver.find_elements(By.CSS_SELECTOR, ".srp-results > .s-item__pl-on-bottom span[role='heading']")[0:25]
-        img = driver.find_elements(By.CSS_SELECTOR, ".srp-results > .s-item__pl-on-bottom .s-item__image img")[0:25]
-        price = driver.find_elements(By.CSS_SELECTOR, ".srp-results > .s-item__pl-on-bottom .s-item__price")[0:25]
-        link = driver.find_elements(By.CSS_SELECTOR, ".srp-results > .s-item__pl-on-bottom .s-item__link")[0:25]
-
-        price = numeric_price_field(price)
-        cheapest_products_list = slct_cheapest_one(price, name, img, link, cheapest_products_list)
-        return cheapest_products_list
-    def search_aliexpress_products(driver, busqueda, cheapest_products_list):
-        busqueda.replace(" ", "+")
-        pagina = "https://es.aliexpress.com/w/wholesale-cartera-hombre.html?SearchText=" + busqueda
-        driver.get(pagina)
-        link = driver.find_elements(By.CSS_SELECTOR, ".list--gallery--34TropR .manhattan--container--1lP57Ag")
-        #refresh the pae until it shows it correctly
-        while len(link)==0:
-            driver.refresh()
-            time.sleep(1)
-            link = driver.find_elements(By.CSS_SELECTOR, ".list--gallery--34TropR .manhattan--container--1lP57Ag")
-        time.sleep(1)
-        driver.execute_script("window.scrollTo(0,1000)")
-        time.sleep(1)
-        driver.execute_script("window.scrollTo(1000,2000)")
-        time.sleep(1)
-        name = driver.find_elements(By.CSS_SELECTOR, ".list--gallery--34TropR .manhattan--container--1lP57Ag .manhattan--titleText--WccSjUS")[0:25]
-        img = driver.find_elements(By.CSS_SELECTOR, ".list--gallery--34TropR .manhattan--container--1lP57Ag .product-img")[0:25]
-        price = driver.find_elements(By.CSS_SELECTOR, ".list--gallery--34TropR .manhattan--container--1lP57Ag .manhattan--price-sale--1CCSZfK:visible")[0:75]
-        link = driver.find_elements(By.CSS_SELECTOR, ".list--gallery--34TropR .manhattan--container--1lP57Ag")[0:25]
-
-        #price = numeric_price_field(price)
-        #cheapest_products_list = slct_cheapest_one(price, name, img, link, cheapest_products_list)
-        hi = ""
-        for i in price:
-            hi += i.text+ "|||"
-        return hi
-
-        #return "<a href='"+str(link[24].get_attribute("href"))+"'>"+str(name[24].text) + "</a>: Precio: " + str(price[24]) + "<img src='"+str(img[24].get_attribute("src"))+"'>"
-        driver.close()
-
-
+    #product to search
     product_name = request.GET["product"]
     # first place for the cheapest product
     cheapest_products = [None, None, None, None, None, None, None, None, None, None]
-    driver = webdriver.Firefox()
-    #cheapest_products = search_amazon_products(driver, product_name, cheapest_products)
-    #search_ebay_products(driver, product_name)
-    hi = search_aliexpress_products(driver, product_name, cheapest_products)
-    #return render(request, "result.html", {"tuplita": cheapest_products})
-    return HttpResponse(hi)
+    cheapest_products = ebay_products(product_name,cheapest_products)
+
+    return render(request, "result.html",{"tuplita":cheapest_products})

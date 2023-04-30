@@ -7,8 +7,8 @@ import scrapy
 
 
 class product_info(scrapy.Item):
-    _name = Field()
-    _price = Field()
-    _photo = Field()
-    _link = Field()
-
+    name = Field()
+    price = Field()
+    photo = Field()
+    link = Field()
+    rate_seller = Field()
