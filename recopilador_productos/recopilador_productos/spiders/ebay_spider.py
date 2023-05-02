@@ -1,5 +1,9 @@
+from time import sleep
+
 from twisted.internet import reactor
-from scrapy.crawler import CrawlerRunner
+from scrapy.crawler import CrawlerRunner, CrawlerProcess
+import scrapy.crawler as crawler
+from multiprocessing import Process, Queue
 from scrapy.spiders import Rule, Request
 from scrapy.linkextractors import LinkExtractor
 from pathlib import Path
@@ -7,7 +11,10 @@ from recopilador_productos.recopilador_productos.items import product_info
 from scrapy.utils.log import configure_logging
 import scrapy
 
+
 product_list = []
+product_search = ""
+
 class ebay_spider(scrapy.Spider):
     name = "peter_parker"
 
@@ -31,13 +38,16 @@ class ebay_spider(scrapy.Spider):
         product_list.append(product)
 
 
-#Start the sctraping action
-def scrap_action():
-    configure_logging({'LOG_FORMAT': '%(levelname)s: %(message)s'})
-    runner = CrawlerRunner()
 
-    d = runner.crawl(ebay_spider)
-    d.addBoth(lambda _: reactor.stop())
-    reactor.run()  # the script will block here until the crawling is finished
-    return product_list
-    
+#Start the sctraping action
+# def scrap_action(product):
+#     #transfer the product search into the global var
+#     global product_search
+#     product_search = product
+#     process = CrawlerProcess()
+#     process.crawl(ebay_spider)
+#     process.start()
+ruta = "hola.txt"
+f = open(ruta,'w')
+f.write("¡¡puta!!")
+f.close()

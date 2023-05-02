@@ -6,7 +6,7 @@
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-
+DJANGO_SETTINGS_MODULE = 'comparador_productos.settings'
 BOT_NAME = "recopilador_productos"
 
 SPIDER_MODULES = ["recopilador_productos.spiders"]
@@ -18,7 +18,7 @@ NEWSPIDER_MODULE = "recopilador_productos.spiders"
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0"
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
-CLOSESPIDER_ITEMCOUNT = 1
+
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 

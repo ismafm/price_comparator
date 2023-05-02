@@ -9,10 +9,25 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from product_management.repositories.Products_repository import Products_repository
-from recopilador_productos.recopilador_productos.spiders.ebay_spider import scrap_action
+from recopilador_productos.recopilador_productos.spiders.ebay_spider import ebay_spider
+import recopilador_productos.recopilador_productos.spiders.ebay_spider
+from scrapy.crawler import CrawlerProcess
 from copy import deepcopy
 from selenium.webdriver.support import expected_conditions as EC
 import time
+import os
+import signal
+#____________________________________
+from django.shortcuts import render
+from django.http import HttpResponse
+from scrapy import signals
+from scrapy.crawler import CrawlerProcess
+from scrapy.utils.project import get_project_settings
+from recopilador_productos.recopilador_productos.spiders import ebay_spider
+from scrapy.crawler import CrawlerRunner
+from twisted.internet import reactor
+from scrapy.utils.log import configure_logging
+from twisted.internet import reactor, defer, task
 
 
 #Pagina que se mostrará al entrar a la pagina a menos que se inicie sesión
@@ -72,15 +87,32 @@ def shw_product(request):
             price[i] = price[i].translate({ord("€"):None})
         return price
 
-    def ebay_products(search_product,cheapest_products):
-        products = scrap_action()
-        new_list = slct_cheapest_one(products,cheapest_products)
-        return new_list
+    def ebay_products(search_product,cheapest_products, product):
+        e = "a"
+        #return products
 
     #product to search
-    product_name = request.GET["product"]
-    # first place for the cheapest product
-    cheapest_products = [None, None, None, None, None, None, None, None, None, None]
-    cheapest_products = ebay_products(product_name,cheapest_products)
 
-    return render(request, "result.html",{"tuplita":cheapest_products})
+    product_name = request.GET["product"].replace(" ", "+")
+    configure_logging()
+    settings = get_project_settings()
+    runner = CrawlerRunner(settings)
+
+    def handle_error(failure):
+        print(failure.getTraceback())
+        reactor.stop()
+    def stop_r():
+        reactor.stop()
+    def prueba():
+        reactor.stop()
+        yield runner.crawl(ebay_spider.ebay_spider).addCallback(stop_r()).addErrback(handle_error)
+
+    d = prueba()
+
+
+
+    # first place for the cheapest product
+    #cheapest_products = [None, None, None, None, None, None, None, None, None, None]
+    #cheapest_products = ebay_products(product_name,cheapest_products, product_name)
+    #return render(request, "result.html",{"tuplita":cheapest_products})
+    return HttpResponse("funciona")
