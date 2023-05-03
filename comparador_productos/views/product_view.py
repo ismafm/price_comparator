@@ -28,6 +28,7 @@ from scrapy.crawler import CrawlerRunner
 from twisted.internet import reactor
 from scrapy.utils.log import configure_logging
 from twisted.internet import reactor, defer, task
+import json
 
 
 #Pagina que se mostrará al entrar a la pagina a menos que se inicie sesión
@@ -42,6 +43,23 @@ def search_page(request):
     return render(request, "search.html")
 
 def shw_product(request):
+    def calling_spider():
+        configure_logging()
+        settings = get_project_settings()
+        runner = CrawlerRunner(settings)
+
+        def handle_error(failure):
+            print(failure.getTraceback())
+            reactor.stop()
+
+        def stop_r():
+            reactor.stop()
+
+        def prueba():
+            reactor.stop()
+            yield runner.crawl(ebay_spider.ebay_spider).addCallback(stop_r()).addErrback(handle_error)
+
+        prueba()
     # recompone la lista cuando hay un valor mas barato para llevarlo a una posicion mas baja.
     def add_new_cheapest(number, product, old_list):
         list = [None, None, None, None, None, None, None, None, None, None]
@@ -88,31 +106,21 @@ def shw_product(request):
         return price
 
     def ebay_products(search_product,cheapest_products, product):
-        e = "a"
-        #return products
+        calling_spider()
+        f = open("comparador_productos/static/json/products.json")
+        product_list = json.load(f)
+        return product_list
+
 
     #product to search
 
     product_name = request.GET["product"].replace(" ", "+")
-    configure_logging()
-    settings = get_project_settings()
-    runner = CrawlerRunner(settings)
 
-    def handle_error(failure):
-        print(failure.getTraceback())
-        reactor.stop()
-    def stop_r():
-        reactor.stop()
-    def prueba():
-        reactor.stop()
-        yield runner.crawl(ebay_spider.ebay_spider).addCallback(stop_r()).addErrback(handle_error)
-
-    d = prueba()
 
 
 
     # first place for the cheapest product
-    #cheapest_products = [None, None, None, None, None, None, None, None, None, None]
-    #cheapest_products = ebay_products(product_name,cheapest_products, product_name)
+    cheapest_products = [None, None, None, None, None, None, None, None, None, None]
+    cheapest_products = ebay_products(product_name,cheapest_products, product_name)
     #return render(request, "result.html",{"tuplita":cheapest_products})
-    return HttpResponse("funciona")
+    return HttpResponse(cheapest_products[0]["name"])

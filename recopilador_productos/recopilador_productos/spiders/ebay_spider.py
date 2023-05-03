@@ -1,3 +1,4 @@
+import json
 from time import sleep
 
 from twisted.internet import reactor
@@ -19,16 +20,21 @@ class ebay_spider(scrapy.Spider):
     name = "peter_parker"
 
     start_urls = [
-        "https://www.ebay.es/sch/i.html?_from=R40&_trksid=p2380057.m570.l1313&_nkw=" + "cartera+hombre" + "&_sacat=0"
+        "https://www.ebay.es/sch/i.html?_nkw=" + "cartera+hombre"
     ]
 
     def parse(self, response):
+
         urls = response.xpath("//li[contains(@id,'item')]//a[@class='s-item__link']/@href")[:25].getall()
         for url in urls:
             yield scrapy.Request(url=url, callback=self.extract_product_info)
 
+
+
+
+
     def extract_product_info(self,response):
-        product = product_info()
+        product = {}
         global product_list
         product["name"] = response.xpath("//h1[@class='x-item-title__mainTitle']//span/text()").get()
         product["price"] = response.xpath("//span[@itemprop='price']/@content").get()
@@ -38,16 +44,8 @@ class ebay_spider(scrapy.Spider):
         product_list.append(product)
 
 
-
-#Start the sctraping action
-# def scrap_action(product):
-#     #transfer the product search into the global var
-#     global product_search
-#     product_search = product
-#     process = CrawlerProcess()
-#     process.crawl(ebay_spider)
-#     process.start()
-ruta = "hola.txt"
-f = open(ruta,'w')
-f.write("¡¡puta!!")
-f.close()
+process = CrawlerProcess()
+process.crawl(ebay_spider)
+process.start()
+with open('comparador_productos/static/json/products.json', 'w') as jf:
+    json.dump(product_list, jf)
