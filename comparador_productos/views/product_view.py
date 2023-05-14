@@ -9,8 +9,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from product_management.repositories.Products_repository import Products_repository
-from recopilador_productos.recopilador_productos.spiders.ebay_spider import ebay_spider
-import recopilador_productos.recopilador_productos.spiders.ebay_spider
+
 from scrapy.crawler import CrawlerProcess
 from copy import deepcopy
 from selenium.webdriver.support import expected_conditions as EC
@@ -23,17 +22,31 @@ from django.http import HttpResponse
 from scrapy import signals
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
-from recopilador_productos.recopilador_productos.spiders import ebay_spider
+
 from scrapy.crawler import CrawlerRunner
 from twisted.internet import reactor
 from scrapy.utils.log import configure_logging
 from twisted.internet import reactor, defer, task
 import json
+import time
+import threading
+from uuid import uuid4
+from urllib.parse import urlparse
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+from django.views.decorators.http import require_POST, require_http_methods
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from scrapyd_api import ScrapydAPI
+from django.shortcuts import render
+import scrapydo
+from recopilador_productos.recopilador_productos.spiders.ebay_spider import ebay_spider
 
 
 #Pagina que se mostrará al entrar a la pagina a menos que se inicie sesión
 def principal_page(request):
-    if request.session["usr_name"] != "":
+    if "usr_name" in request.session and request.session["usr_name"] != "":
         return redirect("/search/")
     return HttpResponse("<a href='/login/'><button>Login</button></a>")
 #pagina de busqueda de productos. En ella solo se podran acceder los usuarios registrados
@@ -43,23 +56,7 @@ def search_page(request):
     return render(request, "search.html")
 
 def shw_product(request):
-    def calling_spider():
-        configure_logging()
-        settings = get_project_settings()
-        runner = CrawlerRunner(settings)
 
-        def handle_error(failure):
-            print(failure.getTraceback())
-            reactor.stop()
-
-        def stop_r():
-            reactor.stop()
-
-        def prueba():
-            reactor.stop()
-            yield runner.crawl(ebay_spider.ebay_spider).addCallback(stop_r()).addErrback(handle_error)
-
-        prueba()
     # recompone la lista cuando hay un valor mas barato para llevarlo a una posicion mas baja.
     def add_new_cheapest(number, product, old_list):
         list = [None, None, None, None, None, None, None, None, None, None]
@@ -106,21 +103,17 @@ def shw_product(request):
         return price
 
     def ebay_products(search_product,cheapest_products, product):
-        calling_spider()
-        f = open("comparador_productos/static/json/products.json")
+        scrapydo.setup()
+        scrapydo.run_spider(ebay_spider)
+        f = open("comparador_productos/static/json/products.json","r")
         product_list = json.load(f)
+        f.close()
         return product_list
-
-
     #product to search
-
     product_name = request.GET["product"].replace(" ", "+")
-
-
-
 
     # first place for the cheapest product
     cheapest_products = [None, None, None, None, None, None, None, None, None, None]
     cheapest_products = ebay_products(product_name,cheapest_products, product_name)
     #return render(request, "result.html",{"tuplita":cheapest_products})
-    return HttpResponse(cheapest_products[0]["name"])
+    return HttpResponse(len(cheapest_products))
