@@ -6,7 +6,6 @@
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-DJANGO_SETTINGS_MODULE = 'comparador_productos.settings'
 BOT_NAME = "recopilador_productos"
 
 SPIDER_MODULES = ["recopilador_productos.spiders"]
@@ -63,7 +62,8 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 #ITEM_PIPELINES = {
-#    "recopilador_productos.pipelines.RecopiladorProductosPipeline": 300,
+#    "recopilador_productos.pipelines.JsonWriterPipeline": 100,
+    #"recopilador_productos.pipelines.ScrapytutorialPipeline": 300,
 #}
 
 # Enable and configure the AutoThrottle extension (disabled by default)

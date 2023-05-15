@@ -42,6 +42,7 @@ from scrapyd_api import ScrapydAPI
 from django.shortcuts import render
 import scrapydo
 from recopilador_productos.recopilador_productos.spiders.ebay_spider import ebay_spider
+import re
 
 
 #Pagina que se mostrará al entrar a la pagina a menos que se inicie sesión
@@ -55,7 +56,7 @@ def search_page(request):
         return redirect("/")
     return render(request, "search.html")
 
-def shw_product(request):
+def calc_product(request):
 
     # recompone la lista cuando hay un valor mas barato para llevarlo a una posicion mas baja.
     def add_new_cheapest(number, product, old_list):
@@ -70,6 +71,17 @@ def shw_product(request):
 
         return list
 
+    def numeric_price_field(price):
+        #select only the numeric part in price field
+        if price is None:
+            price = "999999999"
+        real_price = price.replace("Aproximadamente","")
+        real_price = real_price.replace("EUR","")
+        real_price = real_price.replace(" ","")
+        real_price = real_price.replace("c/u","")
+        return real_price
+
+
     # select the cheapest product in the list and put un cheapest_products list
     def slct_cheapest_one(product_list,cheapest_products_list):
         # range allout products and select cheapest ones
@@ -77,6 +89,7 @@ def shw_product(request):
 
             # select only the numeric part of the price
             price = in_product["price"]
+            price = numeric_price_field(price)
             # replaces the commas with the period to make a numeric parse
 
             # range allout the cheapest product array and insert the compared product if is cheap
@@ -95,25 +108,28 @@ def shw_product(request):
 
         return cheapest_products_list
 
-    def numeric_price_field(price):
-        #select only the numeric part in price field
-        for i,j in enumerate(price):
-            price[i] = j.text.split(' ')[0]
-            price[i] = price[i].translate({ord("€"):None})
-        return price
+
 
     def ebay_products(search_product,cheapest_products, product):
         scrapydo.setup()
         scrapydo.run_spider(ebay_spider)
-        f = open("comparador_productos/static/json/products.json","r")
-        product_list = json.load(f)
-        f.close()
-        return product_list
+        cheapest_products = slct_cheapest_one(ebay_spider.product_list, cheapest_products)
+        ebay_spider.empty_product_list()
+        return cheapest_products
     #product to search
     product_name = request.GET["product"].replace(" ", "+")
 
     # first place for the cheapest product
     cheapest_products = [None, None, None, None, None, None, None, None, None, None]
     cheapest_products = ebay_products(product_name,cheapest_products, product_name)
-    #return render(request, "result.html",{"tuplita":cheapest_products})
-    return HttpResponse(len(cheapest_products))
+    #cheapest_products = ebay_spider().product_list
+    return render(request, "result.html", {"tuplita": cheapest_products})
+    #return redirect("/result/",cheapest_products)
+    #return HttpResponse(str(re.search(r'\b\d+(?:[,.]\d+)?\b', cheapest_products[0]["price"]).group()) + " se supone que es lo mismo que " + str(cheapest_products[0]["price"]))
+    #return HttpResponse(re.findall(r'\d+(?:[,.]\d+)?', cheapest_products[0]["price"]))
+
+    #ebay_spider.empty_product_list()
+    return HttpResponse(len(ebay_spider.product_list))
+
+def shw_product(request):
+    return render(request, "result.html", {"tuplita": list})

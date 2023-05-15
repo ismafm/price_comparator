@@ -7,7 +7,16 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 
+from itemadapter import ItemAdapter
+import json
 
-class RecopiladorProductosPipeline:
+
+class ScrapytutorialPipeline:
     def process_item(self, item, spider):
-        return item
+        print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+
+    def open_spider(self, spider):
+        self.file = open('products.json', 'w')
+
+    def close_spider(self, spider):
+        self.file.close()
