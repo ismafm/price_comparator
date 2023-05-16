@@ -6,13 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="f680ab07-4197-4b34-a5de-8e5ed40382d6" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/comparador_productos/static/json/products.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/comparador_productos/templates/result.html" beforeDir="false" afterPath="$PROJECT_DIR$/comparador_productos/templates/result.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/comparador_productos/templates/search.html" beforeDir="false" afterPath="$PROJECT_DIR$/comparador_productos/templates/search.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/comparador_productos/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/comparador_productos/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/comparador_productos/views/product_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/comparador_productos/views/product_view.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/products.json" beforeDir="false" afterPath="$PROJECT_DIR$/products.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/recopilador_productos/recopilador_productos/pipelines.py" beforeDir="false" afterPath="$PROJECT_DIR$/recopilador_productos/recopilador_productos/pipelines.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/recopilador_productos/recopilador_productos/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/recopilador_productos/recopilador_productos/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/recopilador_productos/recopilador_productos/spiders/ebay_spider.py" beforeDir="false" afterPath="$PROJECT_DIR$/recopilador_productos/recopilador_productos/spiders/ebay_spider.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -44,8 +40,8 @@
     "DefaultHtmlFileTemplate": "HTML File",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "C:/Users/ismae/Desktop/aaaa",
-    "settings.editor.selected.configurable": "preferences.keymap"
+    "last_opened_file_path": "C:/Users/ismae/Desktop/comparador_productos",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default"
   }
 }]]></component>
   <component name="RecentsManager">

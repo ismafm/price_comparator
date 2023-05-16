@@ -24,31 +24,37 @@
 
 <body>
     <div id="generalProducts">
-        <ul>
-            <li><a href="{{ tuplita.0.getLink }}"><img src={{ tuplita.0.getPhoto }}></a>{{ tuplita.0.getName }} |||
-                PRECIO: {{ tuplita.0.getPrice }}</li>
-            <li><a href="{{ tuplita.1.getLink }}"><img src={{ tuplita.1.getPhoto }}></a>{{ tuplita.1.getName }} |||
-                PRECIO: {{ tuplita.1.getPrice }}</li>
-            <li><a href="{{ tuplita.2.getLink }}"><img src={{ tuplita.2.getPhoto }}></a>{{ tuplita.2.getName }} |||
-                PRECIO: {{ tuplita.2.getPrice }}</li>
-            <li><a href="{{ tuplita.3.getLink }}"><img src={{ tuplita.3.getPhoto }}></a>{{ tuplita.3.getName }} |||
-                PRECIO: {{ tuplita.3.getPrice }}</li>
-            <li><a href="{{ tuplita.4.getLink }}"><img src={{ tuplita.4.getPhoto }}></a>{{ tuplita.4.getName }} |||
-                PRECIO: {{ tuplita.4.getPrice }}</li>
-            <li><a href="{{ tuplita.5.getLink }}"><img src={{ tuplita.5.getPhoto }}></a>{{ tuplita.5.getName }} |||
-                PRECIO: {{ tuplita.5.getPrice }}</li>
-            <li><a href="{{ tuplita.6.getLink }}"><img src={{ tuplita.6.getPhoto }}></a>{{ tuplita.6.getName }} |||
-                PRECIO: {{ tuplita.6.getPrice }}</li>
-            <li><a href="{{ tuplita.7.getLink }}"><img src={{ tuplita.7.getPhoto }}></a>{{ tuplita.7.getName }} |||
-                PRECIO: {{ tuplita.7.getPrice }}</li>
-            <li><a href="{{ tuplita.8.getLink }}"><img src={{ tuplita.8.getPhoto }}></a>{{ tuplita.8.getName }} |||
-                PRECIO: {{ tuplita.8.getPrice }}</li>
-            <li><a href="{{ tuplita.9.getLink }}"><img src={{ tuplita.9.getPhoto }}></a>{{ tuplita.9.getName }} |||
-                PRECIO: {{ tuplita.9.getPrice }}</li>
-        </ul>
+<!--        <ul>-->
+<!--            <li><a href="{{ tuplita.0.link }}"><img src={{ tuplita.0.photo }}></a>{{ tuplita.0.name }} |||-->
+<!--                PRECIO: {{ tuplita.0.price }}</li>-->
+<!--            <li><a href="{{ tuplita.1.link }}"><img src={{ tuplita.1.photo }}></a>{{ tuplita.1.name }} |||-->
+<!--                PRECIO: {{ tuplita.1.price }}</li>-->
+<!--            <li><a href="{{ tuplita.2.link }}"><img src={{ tuplita.2.photo }}></a>{{ tuplita.2.name }} |||-->
+<!--                PRECIO: {{ tuplita.2. }}</li>-->
+<!--            <li><a href="{{ tuplita.3.link }}"><img src={{ tuplita.3.photo }}></a>{{ tuplita.3.name }} |||-->
+<!--                PRECIO: {{ tuplita.3.price }}</li>-->
+<!--            <li><a href="{{ tuplita.4.link }}"><img src={{ tuplita.4.photo }}></a>{{ tuplita.4.name }} |||-->
+<!--                PRECIO: {{ tuplita.4.price }}</li>-->
+<!--            <li><a href="{{ tuplita.5.link }}"><img src={{ tuplita.5.photo }}></a>{{ tuplita.5.name }} |||-->
+<!--                PRECIO: {{ tuplita.5.price }}</li>-->
+<!--            <li><a href="{{ tuplita.6.link }}"><img src={{ tuplita.6.photo }}></a>{{ tuplita.6.name }} |||-->
+<!--                PRECIO: {{ tuplita.6.price }}</li>-->
+<!--            <li><a href="{{ tuplita.7.link }}"><img src={{ tuplita.7.photo }}></a>{{ tuplita.7.name }} |||-->
+<!--                PRECIO: {{ tuplita.7.price }}</li>-->
+<!--            <li><a href="{{ tuplita.8.link }}"><img src={{ tuplita.8.photo }}></a>{{ tuplita.8.name }} |||-->
+<!--                PRECIO: {{ tuplita.8.price }}</li>-->
+<!--            <li><a href="{{ tuplita.9.link }}"><img src={{ tuplita.9.photo }}></a>{{ tuplita.9.name }} |||-->
+<!--                PRECIO: {{ tuplita.9.price }}</li>-->
+<!--        </ul>-->
+        {{ tuplita.0.name }}
+        a
     </div>
     <script>
-        alert("funciona");
+        var tuplita = "{{ tuplita|escapejs }}";
+        tuplita = JSON.parse(tuplita);
+        alert(tuplita[0].name);
+
+
     </script>
 </body>
 

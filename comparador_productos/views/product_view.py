@@ -1,49 +1,12 @@
-from django.http import HttpResponse
-from selenium.webdriver.support.wait import WebDriverWait
-
-from session_management.repositories.Users_repository import Users_repository
-from django.shortcuts import render, redirect
-import requests
-from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from product_management.repositories.Products_repository import Products_repository
-
-from scrapy.crawler import CrawlerProcess
-from copy import deepcopy
-from selenium.webdriver.support import expected_conditions as EC
-import time
-import os
-import signal
-#____________________________________
-from django.shortcuts import render
-from django.http import HttpResponse
-from scrapy import signals
-from scrapy.crawler import CrawlerProcess
-from scrapy.utils.project import get_project_settings
-
-from scrapy.crawler import CrawlerRunner
-from twisted.internet import reactor
-from scrapy.utils.log import configure_logging
-from twisted.internet import reactor, defer, task
 import json
-import time
-import threading
-from uuid import uuid4
-from urllib.parse import urlparse
-from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
-from django.views.decorators.http import require_POST, require_http_methods
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from scrapyd_api import ScrapydAPI
+
+from django.shortcuts import render, redirect
+from product_management.repositories.Products_repository import Products_repository
+from django.http import HttpResponse
 from django.shortcuts import render
 import scrapydo
 from recopilador_productos.recopilador_productos.spiders.ebay_spider import ebay_spider
-import re
-
+from operator import itemgetter
 
 #Pagina que se mostrará al entrar a la pagina a menos que se inicie sesión
 def principal_page(request):
@@ -109,27 +72,32 @@ def calc_product(request):
         return cheapest_products_list
 
 
+    def sort_by_price(list):
+        return sorted(list, key=itemgetter("price"))
 
-    def ebay_products(search_product,cheapest_products, product):
+    #Selecciona el tipo de ordenado que se haya pedido
+    def sorting_type(list, sort_type):
+        if sort_type == "Precio":
+            return sort_by_price(list)
+    def ebay_products(search_product, sort_type):
         scrapydo.setup()
         scrapydo.run_spider(ebay_spider)
-        cheapest_products = slct_cheapest_one(ebay_spider.product_list, cheapest_products)
+        cheapest_products = sorting_type(ebay_spider.product_list, sort_type)
         ebay_spider.empty_product_list()
         return cheapest_products
     #product to search
     product_name = request.GET["product"].replace(" ", "+")
-
+    # Obtain the sort type from the form
+    sort_type = request.GET["sort_type"]
     # first place for the cheapest product
-    cheapest_products = [None, None, None, None, None, None, None, None, None, None]
-    cheapest_products = ebay_products(product_name,cheapest_products, product_name)
-    #cheapest_products = ebay_spider().product_list
-    return render(request, "result.html", {"tuplita": cheapest_products})
-    #return redirect("/result/",cheapest_products)
-    #return HttpResponse(str(re.search(r'\b\d+(?:[,.]\d+)?\b', cheapest_products[0]["price"]).group()) + " se supone que es lo mismo que " + str(cheapest_products[0]["price"]))
-    #return HttpResponse(re.findall(r'\d+(?:[,.]\d+)?', cheapest_products[0]["price"]))
+    list = ebay_products(product_name, sort_type)
+    request.session["lists"] = [json.dumps(list),]
+    return redirect("/result/")
+    #return render(request, "result.html", {"tuplita": cheapest_products})
 
-    #ebay_spider.empty_product_list()
-    return HttpResponse(len(ebay_spider.product_list))
+
 
 def shw_product(request):
+    list = request.session["lists"][0]
+    #return HttpResponse(list)
     return render(request, "result.html", {"tuplita": list})
