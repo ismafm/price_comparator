@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 
 <head>
@@ -19,41 +20,32 @@
             display: flex;
             list-style: none;
         }
+        #productList p img{
+            width: 50%;
+        }
     </style>
 </head>
 
 <body>
     <div id="generalProducts">
-<!--        <ul>-->
-<!--            <li><a href="{{ tuplita.0.link }}"><img src={{ tuplita.0.photo }}></a>{{ tuplita.0.name }} |||-->
-<!--                PRECIO: {{ tuplita.0.price }}</li>-->
-<!--            <li><a href="{{ tuplita.1.link }}"><img src={{ tuplita.1.photo }}></a>{{ tuplita.1.name }} |||-->
-<!--                PRECIO: {{ tuplita.1.price }}</li>-->
-<!--            <li><a href="{{ tuplita.2.link }}"><img src={{ tuplita.2.photo }}></a>{{ tuplita.2.name }} |||-->
-<!--                PRECIO: {{ tuplita.2. }}</li>-->
-<!--            <li><a href="{{ tuplita.3.link }}"><img src={{ tuplita.3.photo }}></a>{{ tuplita.3.name }} |||-->
-<!--                PRECIO: {{ tuplita.3.price }}</li>-->
-<!--            <li><a href="{{ tuplita.4.link }}"><img src={{ tuplita.4.photo }}></a>{{ tuplita.4.name }} |||-->
-<!--                PRECIO: {{ tuplita.4.price }}</li>-->
-<!--            <li><a href="{{ tuplita.5.link }}"><img src={{ tuplita.5.photo }}></a>{{ tuplita.5.name }} |||-->
-<!--                PRECIO: {{ tuplita.5.price }}</li>-->
-<!--            <li><a href="{{ tuplita.6.link }}"><img src={{ tuplita.6.photo }}></a>{{ tuplita.6.name }} |||-->
-<!--                PRECIO: {{ tuplita.6.price }}</li>-->
-<!--            <li><a href="{{ tuplita.7.link }}"><img src={{ tuplita.7.photo }}></a>{{ tuplita.7.name }} |||-->
-<!--                PRECIO: {{ tuplita.7.price }}</li>-->
-<!--            <li><a href="{{ tuplita.8.link }}"><img src={{ tuplita.8.photo }}></a>{{ tuplita.8.name }} |||-->
-<!--                PRECIO: {{ tuplita.8.price }}</li>-->
-<!--            <li><a href="{{ tuplita.9.link }}"><img src={{ tuplita.9.photo }}></a>{{ tuplita.9.name }} |||-->
-<!--                PRECIO: {{ tuplita.9.price }}</li>-->
-<!--        </ul>-->
-        {{ tuplita.0.name }}
-        a
+        <ul id="productList">
+            {% for product in tuplita %}
+                <li><a href='{{ product.link }}'>
+                    {% if product.photo %}
+                        <img src='{{ product.photo }}'>
+                    {% else %}
+                        <img src='{% static "img/profile_photos/lucas_chad.png" %}'>
+                    {% endif %}
+                </a>
+                    <p>{{ product.name }}</p>
+                    <p>PRECIO: {{ product.price }}</p>
+                    <p>Rate: {{ product.rate_seller }}</p>
+                    <p><img src="{% static product.logo %}"></p>
+            {% endfor %}
+        </ul>
+
     </div>
     <script>
-        var tuplita = "{{ tuplita|escapejs }}";
-        tuplita = JSON.parse(tuplita);
-        alert(tuplita[0].name);
-
 
     </script>
 </body>
