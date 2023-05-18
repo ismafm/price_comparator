@@ -5,9 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f680ab07-4197-4b34-a5de-8e5ed40382d6" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/recopilador_productos/recopilador_productos/spiders/amazon_spider.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/comparador_productos/templates/result.html" beforeDir="false" afterPath="$PROJECT_DIR$/comparador_productos/templates/result.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/comparador_productos/templates/search.html" beforeDir="false" afterPath="$PROJECT_DIR$/comparador_productos/templates/search.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/comparador_productos/views/product_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/comparador_productos/views/product_view.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/recopilador_productos/recopilador_productos/spiders/ebay_spider.py" beforeDir="false" afterPath="$PROJECT_DIR$/recopilador_productos/recopilador_productos/spiders/ebay_spider.py" afterDir="false" />
     </list>
@@ -35,17 +35,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/ismae/Desktop/comparador_productos&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "C:/Users/ismae/Desktop/comparador_productos/recopilador_productos/recopilador_productos/spiders",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\ismae\Desktop\comparador_productos\recopilador_productos\recopilador_productos\spiders" />
       <recent name="C:\Users\ismae\Desktop\comparador_productos\comparador_productos\templates" />
       <recent name="C:\Users\ismae\Desktop\comparador_productos\comparador_productos\static" />
     </key>

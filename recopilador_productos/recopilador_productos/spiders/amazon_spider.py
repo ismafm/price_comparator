@@ -6,21 +6,21 @@ import scrapydo
 from scrapy.crawler import CrawlerProcess
 
 
-class ebay_spider(scrapy.Spider):
-    name = "peter_parker"
+class amazon_spider(scrapy.Spider):
+    name = "miles_morales"
 
     product_list = []
-    product_search = ""
+    product_search = "cartera+hombre"
 
     def start_requests(self):
         urls = [
-            "https://www.ebay.es/sch/i.html?_nkw=" + ebay_spider.product_search
+            "https://www.amazon.es/s?k=" + amazon_spider.product_search
         ]
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        urls = response.xpath("//li[contains(@id,'item')]//a[@class='s-item__link']/@href")[0:30].getall()
+        urls = response.xpath("//span[@data-component-type='s-search-results']//a[@class='a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal']/@href")[0:30].getall()
         for url in urls:
             yield scrapy.Request(url=url, callback=self.extract_product_info)
 
@@ -29,7 +29,7 @@ class ebay_spider(scrapy.Spider):
         if price is None:
             price = float("+inf")
         real_price = price.replace("Aproximadamente","")
-        real_price = real_price.replace("EUR","")
+        real_price = real_price.replace("€","")
         real_price = real_price.replace(" ","")
         real_price = real_price.replace("c/u","")
         real_price = real_price.replace(",",".")
@@ -46,25 +46,25 @@ class ebay_spider(scrapy.Spider):
 
     def extract_product_info(self,response):
         product = {}
-        product["name"] = response.xpath("//h1[@class='x-item-title__mainTitle']//span/text()").get()
-        product["price"] = self.numeric_price_field(response.xpath("//div[contains(@class,'price__content')]//span[contains(.,'EUR')]/text()").get())
-        product["photo"] = response.xpath("//div[contains(@class,'active')]//img/@src").get()
+        product["name"] = response.xpath("//span[@id='productTitle']/text()").get()
+        product["price"] = self.numeric_price_field(response.xpath("//div[@id='corePriceDisplay_desktop_feature_div']//span[@class='a-offscreen']/text()").get())
+        product["photo"] = response.xpath("//img[@id='landingImage']/@src").get()
         product["link"] = response.request.url
-        product["rate_seller"] = self.numeric_rate_field(response.xpath("//li[@class='ux-seller-section__item'][last()]//span[@class='ux-textspans']/text()").get())
-        product["logo"] = "img/shop_logos/logo_ebay.jpg"
-        product["shop_link"] = "https://www.ebay.es"
-        ebay_spider.product_list.append(product)
+        product["rate_seller"] = self.numeric_rate_field(response.xpath("//span[@id='acrPopover']//span[@class='a-size-base a-color-base']/text()").get())
+        product["logo"] = "img/shop_logos/logo_amazon.jpg"
+        product["shop_link"] = "https://www.amazon.es"
+        amazon_spider.product_list.append(product)
     @staticmethod
     def empty_product_list():
-        ebay_spider.product_list = []
+        amazon_spider.product_list = []
     @staticmethod
     def empty_product_search():
-        ebay_spider.product_search = ""
+        amazon_spider.product_search = ""
     @staticmethod
     def set_product_search(product_search):
-        ebay_spider.product_search = product_search
+        amazon_spider.product_search = product_search
 
 
-# a = CrawlerProcess()
-# a.crawl(ebay_spider)
-# a.start()
+a = CrawlerProcess()
+a.crawl(amazon_spider)
+a.start()

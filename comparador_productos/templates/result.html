@@ -20,7 +20,7 @@
             display: flex;
             list-style: none;
         }
-        #productList p img{
+        #productList p a img{
             width: 50%;
         }
     </style>
@@ -40,7 +40,7 @@
                     <p>{{ product.name }}</p>
                     <p>PRECIO: {{ product.price }}</p>
                     <p>Rate: {{ product.rate_seller }}</p>
-                    <p><img src="{% static product.logo %}"></p>
+                    <p><a href="{{ product.shop_link }}"><img src="{% static product.logo %}"></a></p>
             {% endfor %}
         </ul>
 

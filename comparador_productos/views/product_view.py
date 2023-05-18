@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 import scrapydo
 from recopilador_productos.recopilador_productos.spiders.ebay_spider import ebay_spider
+from recopilador_productos.recopilador_productos.spiders.amazon_spider import amazon_spider
 from operator import itemgetter
 
 #Pagina que se mostrará al entrar a la pagina a menos que se inicie sesión
@@ -29,21 +30,42 @@ def calc_product(request):
             return sort_list(list, "price", False)
         elif sort_type == "rate":
             return sort_list(list, "rate_seller", True)
+    #remove the content in the class vars
+    def purge_spider(spider):
+        spider.empty_product_list()
+        spider.empty_product_search()
 
-    def ebay_products(search_product, sort_type):
+    def ebay_products(search_product):
+        ebay_spider.set_product_search(search_product)
         scrapydo.setup()
         scrapydo.run_spider(ebay_spider)
-        cheapest_products = sorting_type(ebay_spider.product_list, sort_type)
-        ebay_spider.empty_product_list()
-        return cheapest_products[:10]
+        cheapest_products = ebay_spider.product_list
+        purge_spider(ebay_spider)
+        return cheapest_products
+    def amazon_products(search_product):
+        amazon_spider.set_product_search(search_product)
+        scrapydo.setup()
+        scrapydo.run_spider(amazon_spider)
+        cheapest_products = amazon_spider.product_list
+        purge_spider(amazon_spider)
+        return cheapest_products
     #product to search
     product_name = request.GET["product"].replace(" ", "+")
+    ebay_spider.product_search = product_name
     # Obtain the sort type from the form
     sort_type = request.GET["sort_type"]
-    # first place for the cheapest product
-    list = ebay_products(product_name, sort_type)
-    request.session["lists"] = [list,]
-    #return HttpResponse(str(ebay_spider.contador) + "  " + str(len(list)))
+    #obtain ebay products only
+    #ebay_list = ebay_products(product_name)
+    #ebay_list = sorting_type(ebay_list, sort_type)#[:10]
+    #obtain amazon products only
+    amazon_list = amazon_products(product_name)
+    amazon_list = sorting_type(amazon_list, sort_type)  # [:10]
+
+    # General list of cheapest products
+    general_list = sorting_type(amazon_list,sort_type)
+
+    request.session["lists"] = [general_list,]
+    return HttpResponse(str(len(general_list)) + "|||" + str(amazon_spider.product_search))
     return redirect("/result/")
     #return render(request, "result.html", {"tuplita": cheapest_products})
 
