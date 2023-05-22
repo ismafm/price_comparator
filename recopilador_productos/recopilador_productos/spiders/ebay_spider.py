@@ -10,7 +10,7 @@ class ebay_spider(scrapy.Spider):
     name = "peter_parker"
 
     product_list = []
-    product_search = ""
+    product_search = "cartera+hombre"
 
     def start_requests(self):
         urls = [
@@ -65,6 +65,7 @@ class ebay_spider(scrapy.Spider):
         ebay_spider.product_search = product_search
 
 
-# a = CrawlerProcess()
-# a.crawl(ebay_spider)
-# a.start()
+a = CrawlerProcess()
+a.crawl(ebay_spider)
+a.start()
+print(len(ebay_spider.product_list))
