@@ -65,7 +65,7 @@ class ebay_spider(scrapy.Spider):
         ebay_spider.product_search = product_search
 
 
-a = CrawlerProcess()
-a.crawl(ebay_spider)
-a.start()
-print(len(ebay_spider.product_list))
+# a = CrawlerProcess()
+# a.crawl(ebay_spider)
+# a.start()
+# print(len(ebay_spider.product_list))

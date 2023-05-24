@@ -7,7 +7,11 @@ from django.shortcuts import render
 import scrapydo
 from recopilador_productos.recopilador_productos.spiders.ebay_spider import ebay_spider
 from recopilador_productos.recopilador_productos.spiders.amazon_spider import amazon_spider
+from recopilador_productos.recopilador_productos.spiders.alibaba_spider import alibaba_spider
 from operator import itemgetter
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium import webdriver
 
 #Pagina que se mostrará al entrar a la pagina a menos que se inicie sesión
 def principal_page(request):
@@ -16,7 +20,7 @@ def principal_page(request):
     return HttpResponse("<a href='/login/'><button>Login</button></a>")
 #pagina de busqueda de productos. En ella solo se podran acceder los usuarios registrados
 def search_page(request):
-    if "usr_name" not in request.session or request.session["usr_name"] is "":
+    if "usr_name" not in request.session or request.session["usr_name"] == "":
         return redirect("/")
     return render(request, "search.html")
 
@@ -43,29 +47,47 @@ def calc_product(request):
         purge_spider(ebay_spider)
         return cheapest_products
     def amazon_products(search_product):
-        amazon_spider.set_product_search(search_product)
+
+        driver = webdriver.Firefox()
+        driver.get("https://www.amazon.es/s?k=ps5")
+        search_urls = driver.find_elements(By.XPATH, "//div[contains(@class,'sg-col-4-of-24 sg-col-4-of-12 s-result-item s-asin sg-col-4-of-16 sg-col s-widget-spacing-small sg-col-4-of-20')]//a[@class='a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal']")[:30]
+        # saves the urls obtained by selenium in the global_url amazon_spider class var
+        amazon_spider.global_url = search_urls
         scrapydo.setup()
         scrapydo.run_spider(amazon_spider)
-        cheapest_products = amazon_spider.product_list
-        purge_spider(amazon_spider)
-        return cheapest_products
+        list = amazon_spider.product_list
+        driver.close()
+        amazon_spider.restart_spider()
+        return list
+    def alibaba_products(search_product):
+        driver = webdriver.Firefox()
+        driver.get("https://spanish.alibaba.com/trade/search?assessmentCompany=true&keywords=cartera+hombre&moqt=1")
+        search_urls = driver.find_elements(By.XPATH, "//a[@class='elements-title-normal one-line']")[:30]
+        # saves the urls obtained by selenium in the global_url amazon_spider class var
+        alibaba_spider.global_url = search_urls
+        scrapydo.setup()
+        scrapydo.run_spider(alibaba_spider)
+        list = alibaba_spider.product_list
+        driver.close()
+        alibaba_spider.restart_spider()
+        return list
     #product to search
     product_name = request.GET["product"].replace(" ", "+")
-    ebay_spider.product_search = product_name
     # Obtain the sort type from the form
     sort_type = request.GET["sort_type"]
     #obtain ebay products only
     #ebay_list = ebay_products(product_name)
     #ebay_list = sorting_type(ebay_list, sort_type)#[:10]
     #obtain amazon products only
-    amazon_list = amazon_products(product_name)
-    amazon_list = sorting_type(amazon_list, sort_type)  # [:10]
+    #amazon_list = amazon_products(product_name)
+    #amazon_list = sorting_type(amazon_list, sort_type)  # [:10]
+    alibaba_list = alibaba_products(product_name)
+    #alibaba_list = sorting_type(alibaba_list,sort_type)
 
     # General list of cheapest products
-    general_list = sorting_type(amazon_list,sort_type)
+    general_list = alibaba_list#sorting_type(alibaba_list,sort_type)
 
     request.session["lists"] = [general_list,]
-    return HttpResponse(str(len(general_list)) + "|||" + str(amazon_spider.product_search))
     return redirect("/result/")
     #return render(request, "result.html", {"tuplita": cheapest_products})
 
