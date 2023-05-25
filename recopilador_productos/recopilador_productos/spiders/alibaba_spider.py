@@ -10,7 +10,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
 class alibaba_spider(scrapy.Spider):
-    name = "peter_parker"
+    name = "Benjamin_Reilly"
 
     product_list = []
     product_search = "cartera+hombre"
@@ -35,38 +35,40 @@ class alibaba_spider(scrapy.Spider):
 
         for url in urls:
             yield scrapy.Request(url=url.get_attribute("href"),headers=headers, callback=self.parse)
-
-    def parse(self, response):
-        product = {}
-        product["name"] = response.xpath("//div[@class='product-title']//h1/text()").get()
-        product["price"] = response.xpath("//div[@class='price']//span[@class='promotion']/text()").get()
-        product["photo"] = response.xpath("//div[@class='detail-next-slick-slide detail-next-slick-active main-item false']//img/@src").get()
-        product["link"] = response.request.url
-        product["rate_seller"] = response.xpath("//a[@class='attr-item']//div[@class='attr-content']/text()").get()
-        product["logo"] = "img/shop_logos/logo_alibaba.jpg"
-        product["shop_link"] = "https://spanish.alibaba.com/"
-        alibaba_spider.product_list.append(product)
-
     def numeric_price_field(self, price):
         #select only the numeric part in price field
         if price is None:
-            price = float("+inf")
-        real_price = price.replace("Aproximadamente","")
-        real_price = real_price.replace("EUR","")
-        real_price = real_price.replace(" ","")
-        real_price = real_price.replace("c/u","")
-        real_price = real_price.replace(",",".")
+            real_price = float("+inf")
+        else:
+            real_price = price.split()[0]
+            real_price = real_price.replace(",",".")
         return float(real_price)
 
     def numeric_rate_field(self, rate):
         #select only the numeric part in rate field
         if rate is None:
-            rate = float("-inf")
-        real_rate = rate.replace(" ","")
-        real_rate = real_rate.replace(",",".")
-        real_rate = real_rate.replace("(","0")
-        return float(real_rate.split("%")[0])
+            real_rate = float("-inf")
+        else:
+            real_rate = rate.split("/")[0]
+        return float(real_rate)*20
+    def parse(self, response):
+        product = {}
+        product["name"] = response.xpath("//div[@class='product-title']//h1/text()").get()
+        #busca el elemento en las posibles clases que lo puedan tener
+        product["price"] = response.xpath("//div[@class='price']//span[@class='promotion']/text()").get()
+        if product["price"] is None:
+            product["price"] = response.xpath("//span[@class='price']/text()").get()
+        elif product["price"] is None:
+            product["price"] = response.xpath("//div[@class='promotion-price']//strong/text()").get()
+        product["price"] = self.numeric_price_field(product["price"])
 
+        product["photo"] = None
+        product["video"] = response.xpath("//div[@class='bc-video-player']//video/@src").get()
+        product["link"] = response.request.url
+        product["rate_seller"] = self.numeric_rate_field(response.xpath("//div[@class='attr-content'][1]/text()").get())
+        product["logo"] = "img/shop_logos/logo_alibaba.png"
+        product["shop_link"] = "https://spanish.alibaba.com/"
+        alibaba_spider.product_list.append(product)
         # get empty the spider´s info var
     @staticmethod
     def restart_spider():

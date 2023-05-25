@@ -49,7 +49,7 @@ def calc_product(request):
     def amazon_products(search_product):
 
         driver = webdriver.Firefox()
-        driver.get("https://www.amazon.es/s?k=ps5")
+        driver.get("https://www.amazon.es/s?k="+search_product)
         search_urls = driver.find_elements(By.XPATH, "//div[contains(@class,'sg-col-4-of-24 sg-col-4-of-12 s-result-item s-asin sg-col-4-of-16 sg-col s-widget-spacing-small sg-col-4-of-20')]//a[@class='a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal']")[:30]
         # saves the urls obtained by selenium in the global_url amazon_spider class var
         amazon_spider.global_url = search_urls
@@ -61,7 +61,7 @@ def calc_product(request):
         return list
     def alibaba_products(search_product):
         driver = webdriver.Firefox()
-        driver.get("https://spanish.alibaba.com/trade/search?assessmentCompany=true&keywords=cartera+hombre&moqt=1")
+        driver.get("https://spanish.alibaba.com/trade/search?assessmentCompany=true&keywords="+search_product+"&moqt=1")
         search_urls = driver.find_elements(By.XPATH, "//a[@class='elements-title-normal one-line']")[:30]
         # saves the urls obtained by selenium in the global_url amazon_spider class var
         alibaba_spider.global_url = search_urls
@@ -76,18 +76,17 @@ def calc_product(request):
     # Obtain the sort type from the form
     sort_type = request.GET["sort_type"]
     #obtain ebay products only
-    #ebay_list = ebay_products(product_name)
-    #ebay_list = sorting_type(ebay_list, sort_type)#[:10]
+    ebay_list = ebay_products(product_name)
+    ebay_list = sorting_type(ebay_list, sort_type)[:10]
     #obtain amazon products only
-    #amazon_list = amazon_products(product_name)
-    #amazon_list = sorting_type(amazon_list, sort_type)  # [:10]
+    amazon_list = amazon_products(product_name)
+    amazon_list = sorting_type(amazon_list, sort_type)[:10]
     alibaba_list = alibaba_products(product_name)
-    #alibaba_list = sorting_type(alibaba_list,sort_type)
+    alibaba_list = sorting_type(alibaba_list,sort_type)[:10]
 
     # General list of cheapest products
-    general_list = alibaba_list#sorting_type(alibaba_list,sort_type)
-
-    request.session["lists"] = [general_list,]
+    general_list = sorting_type(alibaba_list+amazon_list+ebay_list,sort_type)[:10]
+    request.session["lists"] = [general_list,amazon_list,ebay_list,alibaba_list]
     return redirect("/result/")
     #return render(request, "result.html", {"tuplita": cheapest_products})
 
