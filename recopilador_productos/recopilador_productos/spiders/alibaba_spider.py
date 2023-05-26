@@ -62,8 +62,7 @@ class alibaba_spider(scrapy.Spider):
             product["price"] = response.xpath("//div[@class='promotion-price']//strong/text()").get()
         product["price"] = self.numeric_price_field(product["price"])
 
-        product["photo"] = None
-        product["video"] = response.xpath("//div[@class='bc-video-player']//video/@src").get()
+        product["photo"] = response.xpath("//img[@class='main-img']/@src").get()
         product["link"] = response.request.url
         product["rate_seller"] = self.numeric_rate_field(response.xpath("//div[@class='attr-content'][1]/text()").get())
         product["logo"] = "img/shop_logos/logo_alibaba.png"

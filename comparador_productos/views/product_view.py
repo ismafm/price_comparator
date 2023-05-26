@@ -87,12 +87,16 @@ def calc_product(request):
     # General list of cheapest products
     general_list = sorting_type(alibaba_list+amazon_list+ebay_list,sort_type)[:10]
     request.session["lists"] = [general_list,amazon_list,ebay_list,alibaba_list]
+    # return HttpResponse("<img src='"+alibaba_list[0]["video"]+"'>")
     return redirect("/result/")
     #return render(request, "result.html", {"tuplita": cheapest_products})
 
 
 
 def shw_product(request):
-    list = request.session["lists"][0]
+    general_list = request.session["lists"][0]
+    amazon_list = request.session["lists"][1]
+    ebay_list = request.session["lists"][2]
+    alibaba_list = request.session["lists"][3]
     #return HttpResponse(list)
-    return render(request, "result.html", {"tuplita": list})
+    return render(request, "result.html", {"general_list": general_list,"amazon_list": amazon_list,"ebay_list": ebay_list,"alibaba_list": alibaba_list})
