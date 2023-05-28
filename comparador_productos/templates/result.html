@@ -30,10 +30,9 @@
 
         #products {
             margin: auto;
-            width: 100%;
+            width: 1550px;
             max-width: 1550px;
             height: 800px;
-            max-height: 800px;
             overflow: scroll;
             background-color: wheat;
         }
@@ -65,12 +64,12 @@
         }
 
         /*__*/
+        /*PRODUCT INFO*/
         .productList li{
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             margin: 10px 0 30px 0;
         }
-
         .productInfo {
             display: flex;
             flex-direction: row;
@@ -78,7 +77,10 @@
         }
         .textInfo{
             margin-left: 2%;
-        
+            max-width: 1000px;
+        }
+        .productName{
+            letter-spacing: 1px;
         }
             /*shop selector*/
         #shopSelector{
@@ -87,31 +89,116 @@
             display: flex;
             flex-direction: row;
             width: 100%;
-            background-color: red;
+            z-index: 1;
 
         }
         #shopSelector *{
-            padding: 0 10% 0 10%;
+            width: 100%;
+            padding: 20px 0 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: rgb(214, 180, 116);
+            border: 1px solid rgb(133, 105, 55);
+            cursor: pointer;
+            position: relative;
+        }
+        #shopSelector *:not(:nth-child(5)){
+            border-right: 0px;
+        }
+        #generalButton{
+
+        }
+        #amazonButton{
+        }
+        #spiderButton{
+        }
+        #ebayButton{
+        }
+        #alibabaButton{
         }
         /*general list*/
+        #generalList{
+        }
         /*ebay list*/
+        #ebayList{
+            display: none;
+        }
         /*amazon list*/
+        #amazonList{
+            display: none;
+        }
         /*alibaba list*/
+        #alibabaList{
+            display: none;
+        }
+        /*Hide and show animation*/
+        @keyframes hide {
+            to{
+                opacity: 0;
+            }
+        }
+        .hideClass{
+            animation: hide 0.3s forwards;
+        }
+        @keyframes show {
+            0%{
+                opacity: 0;
+
+            }
+            50%{
+                
+            }
+            100%{
+                opacity: 1;
+            }
+        }
+        .showClass{
+            animation: show 0.6s forwards;
+        }
+        @media (max-width:1560px){
+            html, body{
+                margin: 0;
+                height: 100%;
+            }
+            #products{
+                width: 100%;
+                height: 100%;
+            }
+        }
+        @media (max-width:560px){
+            #shopSelector *{
+                font-size: 12px;
+                padding-left: 4%;
+                padding-right: 4%;
+            }
+            .productInfo{
+                flex-direction: column;
+                margin-left: -50px;
+                padding: 0 5px 0 5px;
+                border-bottom: 1px solid black;
+            }
+            .textInfo *{
+                text-align: center;
+            }
+        }
     </style>
+    <script src='{% static "js/jQuery/jquery-3.7.0.min.js" %}'></script>
 </head>
 
 <body>
     <div id="products">
         <div id="shopSelector">
-            <p>A</p>
-            <p>B</p>
-            <p>C</p>
-            <p>D</p>
-            <p>E</p>
+            <span id="generalButton">LISTA GENERAL</span>
+            <span id="amazonButton">LISTA DE AMAZON</span>
+            <span id="spiderButton">ARAÑA</span>
+            <span id="ebayButton">LISTA DE EBAY</span>
+            <span id="alibabaButton">LISTA DE ALIBABA</span>
         </div>
-        <ul class="productList">
+        <ul class="productList" id="generalList">
             {% for product in general_list %}
-            <li><a href='{{ product.link }}'>
+            <li><a href='{{ product.link }}' target="_blank">
                     <div class="productInfo">
                         {% if product.photo %}
                         <div class="photoDisplay">
@@ -121,21 +208,137 @@
                         <img src='{% static "img/profile_photos/lucas_chad.png" %}'>
                         {% endif %}
                         <div class="textInfo">
-                            <p>{{ product.name }}</p>
+                            <h3 class="productName">{{ product.name }}</h3>
                             <p>PRECIO: {{ product.price }}</p>
                             <p>Rate: {{ product.rate_seller }}</p>
+                            <p><a href="{{ product.shop_link }}" target="_blank"><img class="logo" src="{% static product.logo %}"></a></p>
                         </div>
                     </div>
-                    <p><a href="{{ product.shop_link }}"><img class="logo" src="{% static product.logo %}"></a></p>
+                </a>
+            </li>
+
+            {% endfor %}
+        </ul>
+        <ul class="productList" id="amazonList">
+            {% for product in amazon_list %}
+            <li><a href='{{ product.link }}' target="_blank">
+                    <div class="productInfo">
+                        {% if product.photo %}
+                        <div class="photoDisplay">
+                            <img class="photo" src='{{ product.photo }}'>
+                        </div>
+                        {% else %}
+                        <img src='{% static "img/profile_photos/lucas_chad.png" %}'>
+                        {% endif %}
+                        <div class="textInfo">
+                            <h3 class="productName">{{ product.name }}</h3>
+                            <p>PRECIO: {{ product.price }}</p>
+                            <p>Rate: {{ product.rate_seller }}</p>
+                            <p><a href="{{ product.shop_link }}" target="_blank"><img class="logo" src="{% static product.logo %}"></a></p>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <hr>
+            {% endfor %}
+        </ul>
+        <ul class="productList" id="ebayList">
+            {% for product in ebay_list %}
+            <li><a href='{{ product.link }}' target="_blank">
+                    <div class="productInfo">
+                        {% if product.photo %}
+                        <div class="photoDisplay">
+                            <img class="photo" src='{{ product.photo }}'>
+                        </div>
+                        {% else %}
+                        <img src='{% static "img/profile_photos/lucas_chad.png" %}'>
+                        {% endif %}
+                        <div class="textInfo">
+                            <h3 class="productName">{{ product.name }}</h3>
+                            <p>PRECIO: {{ product.price }}</p>
+                            <p>Rate: {{ product.rate_seller }}</p>
+                            <p><a href="{{ product.shop_link }}" target="_blank"><img class="logo" src="{% static product.logo %}"></a></p>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <hr>
+            {% endfor %}
+        </ul>
+        <ul class="productList" id="alibabaList">
+            {% for product in alibaba_list %}
+            <li><a href='{{ product.link }}' target="_blank">
+                    <div class="productInfo">
+                        {% if product.photo %}
+                        <div class="photoDisplay">
+                            <img class="photo" src='{{ product.photo }}'>
+                        </div>
+                        {% else %}
+                        <img src='{% static "img/profile_photos/lucas_chad.png" %}'>
+                        {% endif %}
+                        <div class="textInfo">
+                            <h3 class="productName">{{ product.name }}</h3>
+                            <p>PRECIO: {{ product.price }}</p>
+                            <p>Rate: {{ product.rate_seller }}</p>
+                            <p><a href="{{ product.shop_link }}" target="_blank"><img class="logo" src="{% static product.logo %}"></a></p>
+                        </div>
+                    </div>
                 </a>
             </li>
             <hr>
             {% endfor %}
         </ul>
     </div>
-
     <script>
+        //Saves the show list id
+        var idShow = "#generalList";
 
+        function hideList() {
+            //hide the actual list
+            $(idShow).removeClass("showClass");
+            $(idShow).addClass("hideClass");
+            setTimeout(() => {
+                $("#generalList").hide();
+                $("#amazonList").hide();
+                $("#ebayList").hide();
+                $("#alibabaList").hide();
+            }, 300);
+        }
+        function showList(newList) {
+            //Show the new list
+            idShow = newList;
+            setTimeout(() => {
+                $(idShow).removeClass("hideClass");
+                $(idShow).addClass("showClass");
+                $(idShow).show();
+            }, 300);
+        }
+
+        $("#generalButton").click(function (event){
+            //Writes the list´s id that is been displayed
+            newListShow = "#generalList";
+            hideList();
+            showList(newListShow)
+        });
+        $("#amazonButton").click(function (){
+            //Writes the list´s id that is been displayed
+            newListShow = "#amazonList";
+            hideList();
+            showList(newListShow)
+        });
+        $("#ebayButton").click(function (){
+            //Writes the list´s id that is been displayed
+            newListShow = "#ebayList";
+            hideList();
+            showList(newListShow)
+        });
+        $("#alibabaButton").click(function (){
+            //Writes the list´s id that is been displayed
+            newListShow = "#alibabaList";
+            hideList();
+            showList(newListShow)
+        });
+        
     </script>
 </body>
 

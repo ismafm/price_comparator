@@ -7,9 +7,7 @@
     <list default="true" id="f680ab07-4197-4b34-a5de-8e5ed40382d6" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/comparador_productos/templates/result.html" beforeDir="false" afterPath="$PROJECT_DIR$/comparador_productos/templates/result.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/comparador_productos/views/product_view.py" beforeDir="false" afterPath="$PROJECT_DIR$/comparador_productos/views/product_view.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/geckodriver.log" beforeDir="false" afterPath="$PROJECT_DIR$/geckodriver.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/recopilador_productos/recopilador_productos/spiders/alibaba_spider.py" beforeDir="false" afterPath="$PROJECT_DIR$/recopilador_productos/recopilador_productos/spiders/alibaba_spider.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
