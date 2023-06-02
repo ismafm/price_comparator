@@ -79,10 +79,12 @@ class alibaba_spider(scrapy.Spider):
 
 # driver = webdriver.Firefox()
 # driver.get("https://spanish.alibaba.com/trade/search?assessmentCompany=true&keywords=cartera+hombre&moqt=1")
-# search_urls = driver.find_elements(By.XPATH, "//a[@class='elements-title-normal one-line']")[:30]
+# search_urls = driver.find_elements(By.XPATH, "//a[contains(@class,'search-card-e-slider__link')]")[:30]
+# search_urls2 =driver.find_elements(By.XPATH, "//a[contains(@class,'elements-title-normal one-line')]")[:30]
 # # saves the urls obtained by selenium in the global_url amazon_spider class var
 # alibaba_spider.global_url = search_urls
-# a = CrawlerProcess()
-# a.crawl(alibaba_spider)
-# a.start()
-# print(len(alibaba_spider.product_list))
+# # a = CrawlerProcess()
+# # a.crawl(alibaba_spider)
+# # a.start()
+# print(len(search_urls))
+# print(len(search_urls2))

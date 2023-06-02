@@ -15,16 +15,18 @@ from selenium import webdriver
 
 #Pagina que se mostrará al entrar a la pagina a menos que se inicie sesión
 def principal_page(request):
-    if "usr_name" in request.session and request.session["usr_name"] != "":
+    if "usr_session" in request.session and request.session["usr_session"] != "":
         return redirect("/search/")
     return HttpResponse("<a href='/login/'><button>Login</button></a>")
 #pagina de busqueda de productos. En ella solo se podran acceder los usuarios registrados
 def search_page(request):
-    if "usr_name" not in request.session or request.session["usr_name"] == "":
+    if "usr_session" not in request.session or request.session["usr_session"] == "":
         return redirect("/")
     return render(request, "search.html")
 
 def calc_product(request):
+    if "usr_session" not in request.session or request.session["usr_session"] == "":
+        return redirect("/")
     def sort_list(list, dic_name, order):
         return sorted(list, key=itemgetter(dic_name), reverse=order)
 
@@ -62,7 +64,9 @@ def calc_product(request):
     def alibaba_products(search_product):
         driver = webdriver.Firefox()
         driver.get("https://spanish.alibaba.com/trade/search?assessmentCompany=true&keywords="+search_product+"&moqt=1")
-        search_urls = driver.find_elements(By.XPATH, "//a[@class='elements-title-normal one-line']")[:30]
+        search_urls = driver.find_elements(By.XPATH, "//a[contains(@class,'search-card-e-slider__link')]")[:30]
+        if len(search_urls) == 0:
+            search_urls = driver.find_elements(By.XPATH, "//a[contains(@class,'elements-title-normal one-line')]")[:30]
         # saves the urls obtained by selenium in the global_url amazon_spider class var
         alibaba_spider.global_url = search_urls
         scrapydo.setup()
@@ -87,13 +91,14 @@ def calc_product(request):
     # General list of cheapest products
     general_list = sorting_type(alibaba_list+amazon_list+ebay_list,sort_type)[:10]
     request.session["lists"] = [general_list,amazon_list,ebay_list,alibaba_list]
-    # return HttpResponse("<img src='"+alibaba_list[0]["video"]+"'>")
     return redirect("/result/")
     #return render(request, "result.html", {"tuplita": cheapest_products})
 
 
 
 def shw_product(request):
+    if "usr_session" not in request.session or request.session["usr_session"] == "":
+        return redirect("/")
     general_list = request.session["lists"][0]
     amazon_list = request.session["lists"][1]
     ebay_list = request.session["lists"][2]

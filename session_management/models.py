@@ -11,3 +11,4 @@ class Users(models.Model):
     born_date=models.DateField()
     id_hash=models.CharField(max_length=15, unique=True)
     admin=models.BooleanField(default=False)
+    profile_photo = models.CharField(max_length=100, unique=False, default='img/profile_photos/none.jpg')

@@ -27,6 +27,7 @@ def login_verification(request):
             request.session["pass_msg"] = ""
             request.session["usr_msg"] = ""
             request.session["usr_name"] = usr
+            request.session["usr_session"] = user.user_hash()
             return redirect('/search/')
         else:
             # if the password is not correct introduces the error message and deletes the error message from the user
@@ -44,4 +45,6 @@ def login_verification(request):
         return redirect("/login/")
 
 def profile(request):
-    return render(request, "profile.html")
+    id_hash_object = Users_repository(id_hash=request.session["usr_session"])
+    usr_info = id_hash_object.hash_user()
+    return render(request, "profile.html",{"usr":usr_info})

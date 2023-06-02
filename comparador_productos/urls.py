@@ -31,4 +31,5 @@ urlpatterns = [
     path('profile/', profile),
     path('calc/', calc_product),
     path('result/', shw_product),
+    path('profile/', profile),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
