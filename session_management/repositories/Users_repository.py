@@ -42,3 +42,19 @@ class Users_repository():
 
         usr_hash = Users.objects.get(user=self._user)
         return usr_hash.id_hash
+    def change_password(self):
+        usr = self.hash_user()
+        usr.password = self._password
+        usr.save()
+    def change_user(self):
+        usr = self.hash_user()
+        usr.user = self._user
+        usr.save()
+    def change_email(self):
+        usr = self.hash_user()
+        usr.email = self._email
+        usr.save()
+    def change_mobile(self):
+        usr = self.hash_user()
+        usr.mobile = self._mobile
+        usr.save()

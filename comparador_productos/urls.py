@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from comparador_productos.views.user_view import login, logout, login_verification, profile
+from comparador_productos.views.user_view import login, logout, login_verification, profile, change_info, apply_changes
 from comparador_productos.views.product_view import shw_product, principal_page, search_page, calc_product
 from django.conf import settings
 from django.conf.urls.static import static
@@ -32,4 +32,6 @@ urlpatterns = [
     path('calc/', calc_product),
     path('result/', shw_product),
     path('profile/', profile),
+    path('info/', change_info),
+    path('change/', apply_changes),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
