@@ -32,7 +32,7 @@ class Users_repository():
             return True
         else:
             return False
-    #recupera el usuario basandose en el hash
+    #recupera el usuario completo basandose en el hash
     def hash_user(self):
 
         usr = Users.objects.get(id_hash=self._id_hash)

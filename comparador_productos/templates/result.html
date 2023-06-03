@@ -43,36 +43,44 @@
         #logo {
             width: 33%;
         }
-        #logoImg{
+
+        #logoImg {
             max-width: 125px;
             max-height: 125px;
         }
-        #searchEngine{
+
+        #searchEngine {
             display: flex;
             justify-content: center;
             width: 33%;
         }
-        #searchForm{
+
+        #searchForm {
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        #searchForm *{
+
+        #searchForm * {
             margin: 1%;
         }
-        #searchInput{
+
+        #searchInput {
             max-width: 200px;
             max-height: 30px;
         }
-        #searchConfirm{
+
+        #searchConfirm {
             max-width: 100px;
             max-height: 30px;
         }
-        #typeForm{
+
+        #typeForm {
             display: flex;
             justify-content: center;
             align-items: center;
         }
+
         #profile {
             width: 33%;
             margin: 10px 0 10px 0;
@@ -84,11 +92,13 @@
             max-width: 80px;
             max-height: 80px;
         }
-        #profileDropdown *{
+
+        #profileDropdown * {
             color: black !important;
             text-decoration: none !important;
         }
-        #profileDropdown{
+
+        #profileDropdown {
             width: 50%;
         }
 
@@ -185,7 +195,8 @@
         .productName {
             letter-spacing: 1px;
         }
-        .productName:hover{
+
+        .productName:hover {
             text-decoration: underline;
         }
 
@@ -294,7 +305,8 @@
             }
 
             #logoSection {}
-            #searchForm{
+
+            #searchForm {
                 flex-direction: column;
             }
         }
@@ -315,55 +327,58 @@
             .textInfo * {
                 text-align: center;
             }
-            #typeForm{
+
+            #typeForm {
                 flex-direction: column;
             }
-            #logoImg{
+
+            #logoImg {}
+
+            #profileDropdown {
+                width: 100%;
+                margin-left: 20%;
             }
-            #profileDropdown{
-            width: 100%;
-            margin-left: 20%;
         }
-        }
-        .hide{
+
+        .hide {
             visibility: hidden;
         }
-       
-        
     </style>
     <link rel="stylesheet" href='{% static "css/bts_css/bootstrap.min.css" %}'>
     <script src='{% static "js/jQuery/jquery-3.7.0.min.js" %}'></script>
     <script src='{% static "js/bts_js/bootstrap.min.js" %}'></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
 </head>
 
 <body>
     <header id="logoSection">
         <div id="logo"><a href="/search/"><img id="logoImg" src='{% static "img/logo/logo.png" %}' alt=""></a></div>
         <div id="searchEngine">
-            <form action="/calc/" method="get" >
+            <form action="/calc/" method="get">
                 <div id="searchForm">
                     <input type="text" id="searchInput" placeholder="Buscar" name="product">
                     <input type="submit" id="searchConfirm">
                 </div>
                 <div id="typeForm">
-                    Precio:<input type="radio" name="sort_type" value="price">Valoraciones de usuario:<input type="radio" name="sort_type" value="rate">
+                    Precio:<input type="radio" name="sort_type" value="price">Valoraciones de usuario:<input
+                        type="radio" name="sort_type" value="rate">
                 </div>
             </form>
         </div>
         <div id="profile">
-                <div id="profileDropdown" class="dropdown">
-                    <a  class="dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img  id='profileImg' class="rounded-circle" src='{% static "img/profile_photos/baity.jpg" %}'
-                        alt="">
-                    </a>
-                  
-                    <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="/profile/">Perfil</a></li>
-                      <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
-                    </ul>
-                  </div>
+            <div id="profileDropdown" class="dropdown">
+                <a class="dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img id='profileImg' class="rounded-circle" src='{% static profile_img %}' alt="">
+                </a>
+
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/profile/">Perfil</a></li>
+                    <li><a class="dropdown-item" href="/close/">Cerrar sesión</a></li>
+                </ul>
             </div>
+        </div>
     </header>
     <div id="products" class="">
         <div id="shopSelector">
@@ -391,11 +406,15 @@
                                 <p>Rate: {{ product.rate_seller }}</p>
                                 <p><a href="{{ product.shop_link }}" target="_blank"><img class="logo"
                                             src="{% static product.logo %}"></a></p>
+                                <form action="/save/" method="post">
+                                    <input type="text" value="{{ product }}" name="product" hidden>
+                                    <input type="submit" value="Añadir a favoritos" class="btn btn-primary">
+                                    {% csrf_token %}
+                                </form>
                             </div>
                         </div>
                     </a>
                 </li>
-
                 {% endfor %}
             </ul>
             <ul class="productList" id="amazonList">
@@ -415,9 +434,15 @@
                                 <p>Rate: {{ product.rate_seller }}</p>
                                 <p><a href="{{ product.shop_link }}" target="_blank"><img class="logo"
                                             src="{% static product.logo %}"></a></p>
+                                <form action="/save/" method="post">
+                                    <input type="text" value="{{ product }}" name="product" hidden>
+                                    <input type="submit" value="Añadir a favoritos" class="btn btn-primary">
+                                    {% csrf_token %}
+                                </form>
                             </div>
                         </div>
                     </a>
+
                 </li>
                 {% endfor %}
             </ul>
@@ -438,6 +463,11 @@
                                 <p>Rate: {{ product.rate_seller }}</p>
                                 <p><a href="{{ product.shop_link }}" target="_blank"><img class="logo"
                                             src="{% static product.logo %}"></a></p>
+                                <form action="/save/" method="post">
+                                    <input type="text" value="{{ product }}" name="product" hidden>
+                                    <input type="submit" value="Añadir a favoritos" class="btn btn-primary">
+                                    {% csrf_token %}
+                                </form>
                             </div>
                         </div>
                     </a>
@@ -461,6 +491,11 @@
                                 <p>Rate: {{ product.rate_seller }}</p>
                                 <p><a href="{{ product.shop_link }}" target="_blank"><img class="logo"
                                             src="{% static product.logo %}"></a></p>
+                                <form action="/save/" method="post">
+                                    <input type="text" value="{{ product }}" name="product" hidden>
+                                    <input type="submit" value="Añadir a favoritos" class="btn btn-primary">
+                                    {% csrf_token %}
+                                </form>
                             </div>
                         </div>
                     </a>

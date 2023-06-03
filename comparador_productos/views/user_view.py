@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from session_management.repositories.Users_repository import Users_repository
+from product_management.repositories.Products_repository import Products_repository
 from django.shortcuts import render, redirect
 import datetime
 def login(request):
@@ -47,9 +48,12 @@ def login_verification(request):
 def profile(request):
     id_hash_object = Users_repository(id_hash=request.session["usr_session"])
     usr_info = id_hash_object.hash_user()
+    # obtain the product that the user likes
+    products = Products_repository(fk_user_id=usr_info.user_id)
+    products = products.product_likes()
     #return HttpResponse(usr_info.born_date)
-    return render(request, "profile.html",{"usr":usr_info})
-
+    return render(request, "profile.html",{"usr":usr_info,"products_like":products})
+#se elige la informacion nueva por parte del usuario
 def change_info(request):
     info_type = request.GET["info_type"]
     #texto informativo
@@ -63,6 +67,7 @@ def change_info(request):
     elif info_type == "pass":
         text = "Cambie su contraseña:"
     return render(request, "info.html", {"text_info":text, "info_type":info_type})
+#Guarda los cambios en la base de datos
 def apply_changes(request):
     info_type = request.POST["info_type"]
     new_info = request.POST["new_info"]
@@ -80,3 +85,7 @@ def apply_changes(request):
         usr = Users_repository(id_hash=hash, password=new_info)
         usr.change_password()
     return redirect("/profile/")
+#Cierra la sesion
+def session_close(request):
+    request.session.flush()
+    return redirect("/")

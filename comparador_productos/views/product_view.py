@@ -12,7 +12,9 @@ from operator import itemgetter
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium import webdriver
-
+from session_management.repositories.Users_repository import Users_repository
+from product_management.repositories.Products_repository import Products_repository
+import json
 #Pagina que se mostrará al entrar a la pagina a menos que se inicie sesión
 def principal_page(request):
     if "usr_session" in request.session and request.session["usr_session"] != "":
@@ -22,7 +24,9 @@ def principal_page(request):
 def search_page(request):
     if "usr_session" not in request.session or request.session["usr_session"] == "":
         return redirect("/")
-    return render(request, "search.html")
+    hash = Users_repository(id_hash=request.session["usr_session"])
+    usr = hash.hash_user()
+    return render(request, "search.html", {"profile_img":usr.profile_photo})
 
 def calc_product(request):
     if "usr_session" not in request.session or request.session["usr_session"] == "":
@@ -93,9 +97,6 @@ def calc_product(request):
     request.session["lists"] = [general_list,amazon_list,ebay_list,alibaba_list]
     return redirect("/result/")
     #return render(request, "result.html", {"tuplita": cheapest_products})
-
-
-
 def shw_product(request):
     if "usr_session" not in request.session or request.session["usr_session"] == "":
         return redirect("/")
@@ -103,5 +104,21 @@ def shw_product(request):
     amazon_list = request.session["lists"][1]
     ebay_list = request.session["lists"][2]
     alibaba_list = request.session["lists"][3]
+
+    hash = Users_repository(id_hash=request.session["usr_session"])
+    usr = hash.hash_user()
     #return HttpResponse(list)
-    return render(request, "result.html", {"general_list": general_list,"amazon_list": amazon_list,"ebay_list": ebay_list,"alibaba_list": alibaba_list})
+    return render(request, "result.html", {"general_list": general_list,"amazon_list": amazon_list,"ebay_list": ebay_list,"alibaba_list": alibaba_list,"profile_img":usr.profile_photo})
+#Guarda el producto en la base de datos
+def save_product(request):
+    #product_id = None, name = None, price = None, photo = None, logo = None, link = None
+    product = request.POST["product"].replace("\'","\"")
+    json_product = json.loads(product)
+    #Obtain the user id from the database
+    usr_id = Users_repository(id_hash=request.session["usr_session"])
+    usr_id = usr_id.hash_user().user_id
+    #producto de la base de datos
+    db_product = Products_repository(name=json_product["name"],price=float(json_product["price"]),photo=json_product["photo"],logo=json_product["logo"],link=json_product["link"],rate_seller=float(json_product["rate_seller"]),
+                                     shop_link=json_product["shop_link"],fk_user_id=usr_id)
+    db_product.new_product()
+    return redirect("/result/")

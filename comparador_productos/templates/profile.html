@@ -1,79 +1,223 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Título genérico</title>
     <link rel="stylesheet" href='{% static "css/bts_css/bootstrap.min.css" %}'>
+    <script src='{% static "js/jQuery/jquery-3.7.0.min.js" %}'></script>
+    <script src="{% static 'js/bts_js/bootstrap.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
     <style>
         @font-face {
             font-family: Roboto;
             src: url('{% static "fonts/Roboto-Regular.ttf" %}');
         }
+
         html,
         body {
             background-color: rgb(204, 178, 130);
             /*width: 100%;
             height: 100%;*/
         }
+
         body * {
             color: black;
             text-decoration: none;
             font-family: Roboto;
         }
-        #profileImg img{
-            max-width: 500px;
+
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /*HEADER*/
+        /*LOGO ZONE*/
+        #logoZone {
+            top: 0;
+            position: sticky;
             width: 100%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-top: 2%;
+            background-color: rgb(204, 178, 130);
+        }
+
+        #logoZone * {}
+
+        #logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        #logoImg {
+            width: 100%;
+            max-width: 90px;
+            height: 100%;
+            max-height: 90px;
+            min-width: 50px;
+            border-radius: 40%;
+            object-fit: cover;
+        }
+
+        #slogan {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        #sloganLogo {
+            width: 100%;
+            height: 100%;
+            max-width: 200px;
+            max-height: 200px;
+            min-width: 50px;
+        }
+
+        #profile {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        #profileImg {
+            width: 100%;
+            height: 100%;
+            max-width: 80px;
+            max-height: 80px;
+            min-width: 50px;
+
+        }
+
+        /*MAIN*/
+        main {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+        }
+
+        /*BIG IMAGE*/
+        #profileImgBig {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+
+        }
+
+        #profileImgBig img {
+            max-width: 400px;
+            max-height: 400px;
+            width: 100%;
+            height: auto;
             border-radius: 50%;
+            min-width: 250px;
+        }
+
+        /*INFO CONTENT*/
+        #infoContent {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /*USER INFO*/
+        #userInfo {
+            width: 100%;
+            margin-bottom: 2%;
+        }
+
+        #userLikes {}
+
+        @media (max-width:470px) {
+            main {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
-<body>
-<main>
-    <div id="profileImg">
-        <img src="{% static usr.profile_photo %}" alt="">
-    </div>
-    <div id="userInfo">
-        <table>
-            <tr>
-                <form action="/info/">
-                    <input type="text" value="user" name="info_type" hidden>
-                    <td>Usuario: {{ usr.user }}</td>
-                    <td><input type="submit" class="btn btn-primary" value="Cambiar"></td>
-                </form>
-                
-            </tr>
-            <tr>
-                <form action="/info/">
-                    <input type="text" value="email" name="info_type" hidden>
-                    <td>Email: {{ usr.email }}</td>
-                    <td><input type="submit" class="btn btn-primary" value="Cambiar"></td>
-                </form>
-            </tr>
-            <tr>
-                <form action="/info/">
-                    <input type="text" value="mobile" name="info_type" hidden>
-                    <td>Teléfono: {{ usr.mobile }}</td>
-                    <td><input type="submit" class="btn btn-primary" value="Cambiar"></td>
-                </form>
-            </tr>
-            <tr>
-                <form action="/info/">
-                    <input type="text" value="pass" name="info_type" hidden>
-                    <td>Contraseña: {{ usr.password }}</td>
-                    <td><input type="submit" class="btn btn-primary" value="Cambiar"></td>
-                </form>
-            </tr>
-            <tr>
-                <form action="/info/">
-                    <td>Fecha de nacimiento: {{ usr.born_date|date:"d/m/Y" }}</td>
-                </form>
-            </tr>
-        </table>
-    </div>
-    <div id="userLikes">
 
-    </div>
-</main>
+<body>
+    <header id="logoZone">
+        <a href="/search/" id="logo"><img id="logoImg" src='{% static "img/logo/pageLogo.png" %}' alt=""></a>
+        <div id="slogan"><img id="sloganLogo" src='{% static "img/logo/sloganLogo.png" %}' alt=""></div>
+        <div id="profile">
+            <div id="profileDropdown" class="dropdown">
+                <a class="dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img id='profileImg' class="rounded-circle" src='{% static usr.profile_photo %}' alt="">
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/profile/">Perfil</a></li>
+                    <li><a class="dropdown-item" href="/close/">Cerrar sesión</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div id="profileImgBig">
+            <img src="{% static usr.profile_photo %}" alt="">
+        </div>
+        <div id="infoContent">
+            <div id="userInfo">
+                <table>
+                    <tr>
+                        <form action="/info/">
+                            <input type="text" value="user" name="info_type" hidden>
+                            <td>Usuario: {{ usr.user }}</td>
+                            <td><input type="submit" class="btn btn-primary" value="Cambiar"></td>
+                        </form>
+
+                    </tr>
+                    <tr>
+                        <form action="/info/">
+                            <input type="text" value="email" name="info_type" hidden>
+                            <td>Email: {{ usr.email }}</td>
+                            <td><input type="submit" class="btn btn-primary" value="Cambiar"></td>
+                        </form>
+                    </tr>
+                    <tr>
+                        <form action="/info/">
+                            <input type="text" value="mobile" name="info_type" hidden>
+                            <td>Teléfono: {{ usr.mobile }}</td>
+                            <td><input type="submit" class="btn btn-primary" value="Cambiar"></td>
+                        </form>
+                    </tr>
+                    <tr>
+                        <form action="/info/">
+                            <input type="text" value="pass" name="info_type" hidden>
+                            <td>Contraseña: {{ usr.password }}</td>
+                            <td><input type="submit" class="btn btn-primary" value="Cambiar"></td>
+                        </form>
+                    </tr>
+                    <tr>
+                        <form action="/info/">
+                            <td>Fecha de nacimiento: {{ usr.born_date|date:"d/m/Y" }}</td>
+                        </form>
+                    </tr>
+                </table>
+            </div>
+            <label for="userLikes">Productos que te han gustado:</label>
+            <div id="userLikes">
+                {% for product in products_like %}
+                <div>
+                    <img style="width: 100px;" src="{{ product.photo }}" alt="">
+                    <a href="{{ product.link }}">{{ product.name }}: precio: {{ product.price }}: Valoraciones: {{ product.rate_seller }} </a>
+                    <a href="{{ product.shop_link }}"><img style="max-width: 80px;" src="{% static product.logo %}" alt="sdasd"></a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
 </body>
+
 </html>
